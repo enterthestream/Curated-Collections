@@ -9,7 +9,7 @@ import {
   Keyboard,
   Dimensions,
 } from "react-native";
-import { fetchRecordsQuery } from "@/utils/api";
+import { searchVARecordsQuery } from "@/api/api";
 import { useState } from "react";
 
 const { width } = Dimensions.get("window");
@@ -17,7 +17,7 @@ const { width } = Dimensions.get("window");
 export default function Search() {
   const [searchQuery, setSearchQuery] = useState("");
   const [submittedQuery, setSubmittedQuery] = useState("");
-  const { data, isLoading, error } = fetchRecordsQuery(submittedQuery);
+  const { data, isLoading, error } = searchVARecordsQuery(submittedQuery);
 
   if (isLoading) return <ActivityIndicator size="large" color={"#00ff00"} />;
   if (error) return <Text style={styles.text}>Error: {error.message}</Text>;
