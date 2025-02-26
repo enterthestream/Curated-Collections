@@ -7,53 +7,84 @@ import {
   Image,
   ActivityIndicator,
   Keyboard,
-  Dimensions,
+  Platform,
+  useWindowDimensions,
 } from "react-native";
 import { useArtworksQuery } from "../hooks/useArtworks";
 import { useState } from "react";
-
-const { width } = Dimensions.get("window");
+import { usePagination } from "../hooks/usePagination";
+import Pagination from "./Pagination";
 
 export default function Search() {
   const [searchQuery, setSearchQuery] = useState("");
   const [submittedQuery, setSubmittedQuery] = useState("");
-  const { data, isLoading, error } = useArtworksQuery(submittedQuery);
+  const { width } = useWindowDimensions();
+  const numColumns = width > 1200 ? 4 : width > 900 ? 3 : width > 600 ? 2 : 1;
+  const itemWidth = (width - (numColumns + 1) * 20) / numColumns - 20;
 
-  if (isLoading) return <ActivityIndicator size="large" color={"#00ff00"} />;
+  const {
+    currentPage,
+    setCurrentPage,
+    hasMore,
+    handleNextPage,
+    handlePrevPage,
+  } = usePagination();
+  const {
+    data = [],
+    isLoading,
+    error,
+  } = useArtworksQuery(submittedQuery, currentPage);
+
+  if (isLoading) return <ActivityIndicator size="large" color={"#FFD425"} />;
   if (error) return <Text style={styles.text}>Error: {error.message}</Text>;
 
   const handleSearchSubmit = () => {
+    setCurrentPage(1);
     setSubmittedQuery(searchQuery);
-    Keyboard.dismiss();
+    if (Platform.OS !== "web") {
+      Keyboard.dismiss();
+    }
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { width: width }]}>
       <TextInput
-        style={styles.input}
+        style={[styles.input, { width: 0.3 * width }]}
         placeholder="Search the collections"
         value={searchQuery}
         onChangeText={setSearchQuery}
         onSubmitEditing={handleSearchSubmit}
         returnKeyType="search"
       />
-      <FlatList
-        data={data?.records}
-        numColumns={2}
-        keyExtractor={(item) => item.systemNumber}
-        renderItem={({ item }) => (
-          <View style={styles.content}>
-            <Text style={styles.title}>{item._primaryTitle}</Text>
-            {item._images?._primary_thumbnail && (
-              <Image
-                source={{ uri: item._images._primary_thumbnail }}
-                style={{ width: "100%", height: 150 }}
-                resizeMode="cover"
-              />
+      {submittedQuery && data.length > 0 && (
+        <>
+          <FlatList
+            data={data}
+            numColumns={numColumns}
+            keyExtractor={(item) => item.id}
+            key={`columns-${numColumns}`}
+            contentContainerStyle={styles.listContainer}
+            renderItem={({ item }) => (
+              <View style={[styles.content, { width: itemWidth }]}>
+                <Text style={styles.title}>{item.title}</Text>
+                {item.image && (
+                  <Image
+                    source={{ uri: item.image }}
+                    style={styles.image}
+                    resizeMode="cover"
+                  />
+                )}
+              </View>
             )}
-          </View>
-        )}
-      />
+          />
+          <Pagination
+            handleNextPage={handleNextPage}
+            handlePrevPage={handlePrevPage}
+            currentPage={currentPage}
+            hasMore={hasMore}
+          />
+        </>
+      )}
     </View>
   );
 }
@@ -62,7 +93,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "flex-start",
-    paddingTop: 20,
+    paddingTop: Platform.OS === "web" ? 40 : 20,
+    alignItems: "center",
+  },
+  listContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
   },
   text: {
     padding: 20,
@@ -71,10 +108,15 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontFamily: "Cochin",
   },
+  image: {
+    width: "100%",
+    aspectRatio: 1,
+  },
   input: {
     height: 50,
     borderWidth: 1,
     padding: 10,
+    paddingHorizontal: 10,
     borderColor: "white",
     color: "white",
     fontFamily: "Cochin",
@@ -82,7 +124,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   content: {
-    width: width / 2 - 20,
     margin: 10,
     borderRadius: 10,
     backgroundColor: "rgba(255,255,255,0.1)",
@@ -91,7 +132,7 @@ const styles = StyleSheet.create({
     padding: 5,
     color: "black",
     fontFamily: "Cochin",
-    fontSize: 14,
+    fontSize: 16,
     textAlign: "center",
   },
 });
