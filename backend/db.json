@@ -1,0 +1,16 @@
+{
+  "collections": [
+    {
+      "user": "test_user",
+      "collectionId": "5cc13cba-934e-4231-b746-c26a7242cfcb",
+      "name": "my first collection",
+      "artworks": []
+    },
+    {
+      "user": "test_user",
+      "name": "my second collection",
+      "artworks": [],
+      "collectionId": "092259ca-4750-40c7-8eb2-a085e9307d9c"
+    }
+  ]
+}
