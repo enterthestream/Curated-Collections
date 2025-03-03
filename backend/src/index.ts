@@ -1,8 +1,9 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import app from "./app";
 
-const { PORT, DATABASE_FILE, SECRET_KEY } = process.env;
-
-console.log(PORT, DATABASE_FILE, SECRET_KEY);
+const { PORT, DATABASE_URL, SECRET_KEY } = process.env;
 
 const server = app.listen(PORT, (err?: Error) => {
   if (err) {
