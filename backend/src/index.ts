@@ -1,5 +1,8 @@
 import app from "./app";
-const { PORT = 8080 } = process.env;
+
+const { PORT, DATABASE_FILE, SECRET_KEY } = process.env;
+
+console.log(PORT, DATABASE_FILE, SECRET_KEY);
 
 const server = app.listen(PORT, (err?: Error) => {
   if (err) {
