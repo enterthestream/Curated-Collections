@@ -38,6 +38,7 @@ export async function postCollection(req: Request, res: Response) {
     const { user, name, artworks } = req.body;
 
     if (!user || !name || !Array.isArray(artworks)) {
+      console.log("Validation failed:", { user, name, artworks });
       res.status(400).json({ msg: "Missing or invalid fields" });
       return; // void return due to documented issue with types and express
     }
@@ -95,19 +96,13 @@ export async function postArtwork(req: Request, res: Response) {
 
 export async function deleteArtwork(req: Request, res: Response) {
   try {
-    const { collectionId } = req.params;
-    const {
-      artwork: { artworkId, source },
-    } = req.body;
+    const { collectionId, artworkId } = req.params;
 
-    if (!collectionId || !artworkId || !source) {
+    if (!collectionId || !artworkId) {
       res.status(400).json({ msg: "Missing or invalid fields" });
       return;
     }
-    const updatedCollection = await removeArtwork(collectionId, {
-      artworkId,
-      source,
-    });
+    const updatedCollection = await removeArtwork(collectionId, artworkId);
 
     if (updatedCollection === null) {
       res.status(400).json({ msg: "Collection not found" });

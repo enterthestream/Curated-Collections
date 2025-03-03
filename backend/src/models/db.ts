@@ -80,7 +80,7 @@ export async function addArtwork(collectionId: string, artwork: Artwork) {
 
 export async function removeArtwork(
   collectionId: string,
-  artwork: Artwork
+  artworkId: string
 ): Promise<Collection | ArtworkError | null> {
   await db.read();
 
@@ -92,7 +92,7 @@ export async function removeArtwork(
   }
 
   const artworkExists = foundCollection.artworks.some(
-    (a) => a.artworkId === artwork.artworkId && a.source === artwork.source
+    (a) => a.artworkId === artworkId
   );
 
   if (!artworkExists) {
@@ -100,7 +100,7 @@ export async function removeArtwork(
   }
 
   const updatedCollectionArtworks = foundCollection?.artworks.filter(
-    (a) => a.artworkId !== artwork.artworkId && a.source !== artwork.source
+    (a) => a.artworkId !== artworkId
   );
 
   const updatedCollection = {
