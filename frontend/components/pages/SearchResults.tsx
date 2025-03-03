@@ -8,6 +8,8 @@ import {
 import Pagination from "../widget/Pagination";
 import { Artwork } from "@/types.ts/artworks";
 import ArtworkCard from "./ArtworksCard";
+import { useState } from "react";
+import { TextInput } from "react-native-gesture-handler";
 
 type SearchResultsProps = {
   isLoading: boolean;
@@ -36,6 +38,14 @@ export default function SearchResults({
   handlePrevPage,
   onArtworkSelect,
 }: SearchResultsProps) {
+  const [filterQuery, setFilterQuery] = useState<string>("");
+
+  const filteredData = filterQuery
+    ? data.filter((artwork) =>
+        artwork.artist.toLowerCase().includes(filterQuery.toLowerCase())
+      )
+    : data;
+
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
@@ -66,9 +76,17 @@ export default function SearchResults({
 
   return (
     <View style={styles.resultsContainer}>
-      <Text style={styles.resultsCount}>{data.length} results found</Text>
+      <Text style={styles.resultsCount}>
+        {filteredData.length} results found
+      </Text>
+      <TextInput
+        style={styles.filterInput}
+        placeholder="Filter by artist..."
+        value={filterQuery}
+        onChangeText={setFilterQuery}
+      />
       <FlatList
-        data={data}
+        data={filteredData}
         numColumns={numColumns}
         keyExtractor={(item) => item.artworkId}
         key={`columns-${numColumns}`}
@@ -126,5 +144,17 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "bold",
     fontFamily: "Cochin",
+  },
+  filterInput: {
+    height: 40,
+    borderWidth: 1,
+    padding: 10,
+    paddingHorizontal: 10,
+    borderColor: "white",
+    color: "white",
+    fontFamily: "Cochin",
+    fontSize: 20,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    borderRadius: 8,
   },
 });
