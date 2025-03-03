@@ -1,5 +1,7 @@
 import axios from "axios";
-const api = axios.create({ baseURL: "http://localhost:8080" });
+const api = axios.create({
+  baseURL: "https://curated-collections.onrender.com",
+});
 
 axios.interceptors.request.use(
   (request) => {
