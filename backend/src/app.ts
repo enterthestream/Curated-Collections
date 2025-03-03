@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import {
   deleteArtwork,
   getAllCollections,
@@ -8,7 +9,7 @@ import {
 } from "./controllers/controllers";
 
 const app = express();
-
+app.use(cors());
 app.use(express.json());
 
 app.get("/collections", getAllCollections);
@@ -19,7 +20,7 @@ app.post("/collections", postCollection);
 
 app.post("/collections/:collectionId/artworks", postArtwork);
 
-app.delete("/collections/:collectionId/artworks", deleteArtwork);
+app.delete("/collections/:collectionId/artworks/:artworkId", deleteArtwork);
 
 app.all("*", (request, response) => {
   response.status(404).send({ msg: "path not found" });
