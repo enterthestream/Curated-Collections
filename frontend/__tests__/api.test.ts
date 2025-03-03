@@ -132,14 +132,14 @@ describe("Search Museum API", () => {
     });
     const mockCombinedArtworksArrayData = [
       {
-        id: "123",
+        artworkId: "123",
         title: "Blue Nude",
         artist: "Matisse",
         image: "va-image-url/full/!300,300/0/default.jpg",
         source: "Victoria and Albert Museum",
       },
       {
-        id: "789",
+        artworkId: "789",
         title: "Vegetables",
         artist: "Matisse",
         image: "met-image-url.jpg",

@@ -1,11 +1,7 @@
 import {
   StyleSheet,
   View,
-  Text,
   TextInput,
-  FlatList,
-  Image,
-  ActivityIndicator,
   Keyboard,
   Platform,
   useWindowDimensions,
@@ -13,11 +9,22 @@ import {
 import { useArtworksQuery } from "../hooks/useArtworks";
 import { useState } from "react";
 import { usePagination } from "../hooks/usePagination";
-import Pagination from "./Pagination";
+import { Artwork } from "@/types.ts/artworks";
+import SearchResults from "../pages/SearchResults";
+import ArtworkDetailView from "../pages/ArtworkDetailView";
+import { useCollections } from "@/context/CollectionsContext";
 
-export default function Search() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [submittedQuery, setSubmittedQuery] = useState("");
+type SearchProps = {
+  searchQuery: string;
+  setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
+};
+export default function Search({ searchQuery, setSearchQuery }: SearchProps) {
+  const [submittedQuery, setSubmittedQuery] = useState<string>("");
+  const [selectedArtwork, setSelectedArtwork] = useState<Artwork | null>(null);
+  const [isDetailsVisible, setIsDetailsVisible] = useState<boolean>(false);
+
+  const { collections, setCollections } = useCollections();
+
   const { width } = useWindowDimensions();
   const numColumns = width > 1200 ? 4 : width > 900 ? 3 : width > 600 ? 2 : 1;
   const itemWidth = (width - (numColumns + 1) * 20) / numColumns - 20;
@@ -29,14 +36,12 @@ export default function Search() {
     handleNextPage,
     handlePrevPage,
   } = usePagination();
+
   const {
     data = [],
     isLoading,
     error,
   } = useArtworksQuery(submittedQuery, currentPage);
-
-  if (isLoading) return <ActivityIndicator size="large" color={"#FFD425"} />;
-  if (error) return <Text style={styles.text}>Error: {error.message}</Text>;
 
   const handleSearchSubmit = () => {
     setCurrentPage(1);
@@ -46,45 +51,50 @@ export default function Search() {
     }
   };
 
+  const handleArtworkSelect = (artwork: Artwork) => {
+    setSelectedArtwork(artwork);
+    setIsDetailsVisible(true);
+  };
+
+  const handleCloseDetails = () => {
+    setIsDetailsVisible(false);
+    setSelectedArtwork(null);
+  };
+
   return (
     <View style={[styles.container, { width: width }]}>
-      <TextInput
-        style={[styles.input, { width: 0.3 * width }]}
-        placeholder="Search the collections"
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-        onSubmitEditing={handleSearchSubmit}
-        returnKeyType="search"
+      <View style={styles.searchBarContainer}>
+        <TextInput
+          style={[styles.input, { width: 0.3 * width }]}
+          placeholder="Search artworks"
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          onSubmitEditing={handleSearchSubmit}
+          returnKeyType="search"
+          autoFocus
+        />
+      </View>
+
+      <SearchResults
+        data={data}
+        isLoading={isLoading}
+        error={error}
+        submittedQuery={submittedQuery}
+        numColumns={numColumns}
+        itemWidth={itemWidth}
+        currentPage={currentPage}
+        hasMore={hasMore}
+        handleNextPage={handleNextPage}
+        handlePrevPage={handlePrevPage}
+        onArtworkSelect={handleArtworkSelect}
       />
-      {submittedQuery && data.length > 0 && (
-        <>
-          <FlatList
-            data={data}
-            numColumns={numColumns}
-            keyExtractor={(item) => item.id}
-            key={`columns-${numColumns}`}
-            contentContainerStyle={styles.listContainer}
-            renderItem={({ item }) => (
-              <View style={[styles.content, { width: itemWidth }]}>
-                <Text style={styles.title}>{item.title}</Text>
-                {item.image && (
-                  <Image
-                    source={{ uri: item.image }}
-                    style={styles.image}
-                    resizeMode="cover"
-                  />
-                )}
-              </View>
-            )}
-          />
-          <Pagination
-            handleNextPage={handleNextPage}
-            handlePrevPage={handlePrevPage}
-            currentPage={currentPage}
-            hasMore={hasMore}
-          />
-        </>
-      )}
+
+      <ArtworkDetailView
+        isDetailVisible={isDetailsVisible}
+        artwork={selectedArtwork}
+        collections={collections}
+        onClose={handleCloseDetails}
+      />
     </View>
   );
 }
@@ -92,25 +102,14 @@ export default function Search() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "flex-start",
-    paddingTop: Platform.OS === "web" ? 40 : 20,
+    backgroundColor: "rgba(20, 24, 28, 0.95)",
+  },
+  searchBarContainer: {
+    paddingVertical: 20,
+    paddingHorizontal: 20,
     alignItems: "center",
-  },
-  listContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-  },
-  text: {
-    padding: 20,
-    color: "white",
-    fontSize: 15,
-    fontWeight: "bold",
-    fontFamily: "Cochin",
-  },
-  image: {
-    width: "100%",
-    aspectRatio: 1,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(255,255,255,0.1)",
   },
   input: {
     height: 50,
@@ -122,17 +121,6 @@ const styles = StyleSheet.create({
     fontFamily: "Cochin",
     fontSize: 20,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  content: {
-    margin: 10,
-    borderRadius: 10,
-    backgroundColor: "rgba(255,255,255,0.1)",
-  },
-  title: {
-    padding: 5,
-    color: "black",
-    fontFamily: "Cochin",
-    fontSize: 16,
-    textAlign: "center",
+    borderRadius: 8,
   },
 });

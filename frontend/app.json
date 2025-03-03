@@ -24,6 +24,7 @@
     "plugins": [],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "entryPoint": "./App.tsx"
   }
 }
