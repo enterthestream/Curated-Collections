@@ -98,7 +98,7 @@ to
 Navigate to backend project folder and build:
 
 ```bash
-cd frontend
+cd backend
 npm build
 ```
 
