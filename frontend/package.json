@@ -2,6 +2,7 @@
   "name": "curated-collections",
   "main": "index.tsx",
   "version": "1.0.0",
+  "homepage": "https://username.github.io/expo-gh-pages",
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
@@ -10,8 +11,13 @@
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "expo lint",
+<<<<<<< Updated upstream
     "predeploy": "expo export",
     "deploy": "gh-pages -d dist"
+=======
+    "predeploy": "expo export -p web",
+    "deploy": "gh-pages --nojekyll -d dist"
+>>>>>>> Stashed changes
   },
   "jest": {
     "preset": "jest-expo"
@@ -19,13 +25,14 @@
   "dependencies": {
     "@expo/metro-runtime": "~4.0.1",
     "@expo/vector-icons": "^14.0.4",
+    "@expo/webpack-config": "^19.0.1",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
     "@react-navigation/stack": "^7.1.1",
     "@tanstack/react-query": "^5.66.0",
     "@tanstack/react-query-devtools": "^5.66.0",
     "axios": "^1.7.9",
-    "expo": "^52.0.33",
+    "expo": "^52.0.37",
     "expo-blur": "~14.0.3",
     "expo-constants": "~17.0.5",
     "expo-font": "~13.0.3",
