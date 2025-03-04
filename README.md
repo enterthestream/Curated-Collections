@@ -1,6 +1,6 @@
 # Curated Collections
 
-**Curated Collections** is a web platform that allows users to explore, curate, and manage virtual art exhibitions. It fetches artwork data from multiple museum/university APIs, enabling users to create personalized exhibitions and browse through collections.
+**Curated Collections** is a web platform that allows users to explore, curate, and manage virtual art exhibitions. It fetches artwork data from multiple museum APIs, enabling users to create personalized exhibitions and browse through collections.
 
 **Features:**
 
@@ -62,16 +62,12 @@ npm run start
 For web:
 
 ```bash
-Copy
-Edit
 npm run web
 ```
 
 For Android/iOS:
 
 ```bash
-Copy
-Edit
 npm run android
 npm run ios
 ```
