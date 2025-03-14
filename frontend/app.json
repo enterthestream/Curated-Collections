@@ -25,7 +25,7 @@
     "plugins": [],
     "experiments": {
       "typedRoutes": true,
-      "baseUrl": "/expo-gh-pages"
+      "baseUrl": "/"
     },
     "entryPoint": "./App.tsx"
   }
