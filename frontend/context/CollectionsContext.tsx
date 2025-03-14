@@ -38,7 +38,6 @@ export function CollectionsContextProvider({
   }
 
   useEffect(() => {
-    console.log("Component mounted");
     fetchUserCollections();
   }, []);
 

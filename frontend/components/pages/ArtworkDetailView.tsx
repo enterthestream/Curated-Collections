@@ -1,7 +1,6 @@
 import { postArtwork } from "@/api/backendFunctions";
-import { ArtworkRef, Artwork } from "@/types.ts/artworks";
-import { Collection } from "@/types.ts/collection";
-import { useState, useEffect } from "react";
+import { Artwork } from "@/types.ts/artworks";
+import { useState } from "react";
 import {
   Modal,
   TouchableOpacity,
@@ -16,70 +15,43 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import CollectionSelector from "../widget/CollectionSelector";
 import { ScrollView } from "react-native-gesture-handler";
+import { useCollections } from "@/context/CollectionsContext";
 
 type ArtworkDetailViewProps = {
   isDetailVisible: boolean;
   artwork: Artwork | null;
-  collections: Collection[];
   onClose: () => void;
 };
 
 export default function ArtworkDetailView({
   isDetailVisible,
   artwork,
-  collections,
   onClose,
 }: ArtworkDetailViewProps) {
+  const { collections, setCollections, refreshCollections } = useCollections();
   const [selectedId, setSelectedId] = useState<string>("");
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [addSuccess, setAddSuccess] = useState<boolean>(false);
   const { width, height } = useWindowDimensions();
 
-  const logState = () => {
-    console.log("Current state:", {
-      selectedId,
-      isAdding,
-      addSuccess,
-      artwork: artwork ? artwork.artworkId : null,
-    });
-  };
-
-  useEffect(() => {
-    console.log("Collections received:", collections);
-    // Check if collections have valid ids
-    const validIds = collections.every((c) => Boolean(c.collectionId));
-    console.log("All collections have valid IDs:", validIds);
-    if (!validIds) {
-      console.warn(
-        "Some collections are missing IDs:",
-        collections.filter((c) => !c.collectionId).map((c) => c.name)
-      );
-    }
-  }, [collections]);
-
   const handleAddToCollection = async () => {
-    logState();
-
-    if (!artwork) {
-      console.error("No artwork to add");
-
-      return;
-    }
-
-    if (!selectedId) {
-      console.error("No collection selected");
-
-      return;
-    }
+    if (!artwork || !selectedId) return;
 
     setIsAdding(true);
+
+    setCollections((prev) =>
+      prev.map((collection) =>
+        collection.collectionId === selectedId
+          ? { ...collection, artworks: [...collection.artworks, artwork] }
+          : collection
+      )
+    );
+
     try {
-      console.log("Attempting to add artwork", {
-        collectionId: selectedId,
-        artworkId: artwork.artworkId,
-        source: artwork.source,
-      });
       await postArtwork(selectedId, artwork.artworkId, artwork.source);
+
+      await refreshCollections();
+
       setAddSuccess(true);
     } catch (err) {
       console.error("Failed to add artwork to collection", err);
@@ -94,7 +66,6 @@ export default function ArtworkDetailView({
     onClose();
   };
   const handleSelectCollection = (collectionId: string) => {
-    console.log("Collection selected:", collectionId);
     setSelectedId(collectionId);
   };
 
@@ -168,22 +139,24 @@ export default function ArtworkDetailView({
                         selectedId={selectedId}
                         onSelect={handleSelectCollection}
                       />
-                      <TouchableOpacity
-                        style={[
-                          styles.addButton,
-                          (!selectedId || isAdding) && styles.disabledButton,
-                        ]}
-                        onPress={handleAddToCollection}
-                        disabled={!selectedId || isAdding}
-                      >
-                        {isAdding ? (
-                          <ActivityIndicator size="small" color="white" />
-                        ) : (
-                          <View style={styles.addButton}>
-                            <AntDesign name="plus" size={18} color="white" />
-                          </View>
-                        )}
-                      </TouchableOpacity>
+                      <View style={{ width: "100%" }}>
+                        <TouchableOpacity
+                          style={[
+                            styles.addButton,
+                            { opacity: !selectedId || isAdding ? 0.5 : 1 },
+                          ]}
+                          onPress={handleAddToCollection}
+                          disabled={!selectedId || isAdding}
+                        >
+                          {isAdding ? (
+                            <ActivityIndicator size="small" color="white" />
+                          ) : (
+                            <View style={styles.addButton}>
+                              <AntDesign name="plus" size={18} color="white" />
+                            </View>
+                          )}
+                        </TouchableOpacity>
+                      </View>
                     </>
                   )}
                 </View>
@@ -283,13 +256,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 6,
     alignItems: "center",
-  },
-  disabledButton: {
-    backgroundColor: "rgba(255, 212, 37, 1)",
-    padding: 12,
-    borderRadius: 6,
-    alignItems: "center",
-    marginTop: 15,
+    justifyContent: "center",
   },
   noCollectionsMsg: {
     padding: 15,

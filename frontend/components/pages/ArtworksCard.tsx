@@ -32,9 +32,6 @@ export default function ArtworkCard({
       )}
       <Text style={styles.artist}>{artwork.artist}</Text>
       <Text style={styles.source}>{artwork.source}</Text>
-      <View>
-        <Text style={styles.viewDetailsText}>View</Text>
-      </View>
     </TouchableOpacity>
   );
 }
@@ -43,7 +40,7 @@ const styles = StyleSheet.create({
     margin: 10,
     padding: 10,
     borderRadius: 8,
-    backgroundColor: "rgba(255,255,255,0.1)",
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
   },
   title: {
     padding: 5,
@@ -89,10 +86,5 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 212, 37, 0.7)",
     borderRadius: 4,
     alignItems: "center",
-  },
-  viewDetailsText: {
-    color: "#000",
-    fontWeight: "bold",
-    fontFamily: "Cochin",
   },
 });

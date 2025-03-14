@@ -34,7 +34,15 @@ export default function CollectionSelector({
             ]}
             onPress={() => onSelect(item.collectionId)}
           >
-            <Text>{item.name}</Text>
+            <Text
+              style={[
+                styles.collectionName,
+                item.collectionId === selectedId &&
+                  styles.selectedCollectionName,
+              ]}
+            >
+              {item.name}
+            </Text>
           </TouchableOpacity>
         )}
       />
@@ -62,5 +70,16 @@ const styles = StyleSheet.create({
   },
   selectedCollection: {
     backgroundColor: "rgba(255, 212, 37, 1)",
+  },
+  collectionName: {
+    color: "white",
+    fontSize: 15,
+    fontFamily: "Cochin",
+  },
+  selectedCollectionName: {
+    color: "black",
+    fontSize: 18,
+    fontWeight: "bold",
+    fontFamily: "Cochin",
   },
 });

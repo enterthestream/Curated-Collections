@@ -11,7 +11,7 @@ export function fetchArtworksVA(query: string, currentPage: number = 1) {
   return vaApi
     .get(`/objects/search?q=${query}&page=${currentPage}&page_size=10`)
     .then(({ data }) => {
-      return data;
+      return { records: data.records, recordsCount: data.info.record_count };
     })
     .catch((err) => {
       throw handleAxiosError(err, "VA");
@@ -34,7 +34,8 @@ export async function fetchArtworksMet(query: string, currentPage: number = 1) {
       data: { objectIDs },
     } = await metApi.get(`/search?q=${query}`);
 
-    if (!objectIDs || objectIDs.length === 0) return [];
+    if (!objectIDs || objectIDs.length === 0)
+      return { records: [], recordsCount: 0 };
 
     if (objectIDs.length > 0) {
       const startIndex = currentPage * 10 - 10;
@@ -51,7 +52,7 @@ export async function fetchArtworksMet(query: string, currentPage: number = 1) {
         })
       );
       const validObjects = objectDetails.filter((item) => item !== null);
-      return validObjects;
+      return { records: validObjects, recordsCount: objectIDs.length };
     }
   } catch (err) {
     throw handleAxiosError(err, "MET");
@@ -67,10 +68,10 @@ export async function fetchCombinedArtworks(
   try {
     const [vaData, metData] = await Promise.all([
       fetchArtworksVA(query, currentPage).catch((err) => {
-        return null;
+        return { records: [], recordsCount: 0 };
       }),
       fetchArtworksMet(query, currentPage).catch((err) => {
-        return [];
+        return { records: [], recordsCount: 0 };
       }),
     ]);
     const vaArtworks =
@@ -85,7 +86,7 @@ export async function fetchCombinedArtworks(
       })) || [];
 
     const metArtworks =
-      metData?.map((item: any) => ({
+      metData?.records?.map((item: any) => ({
         artworkId: item.objectID.toString(),
         title: item.title || "Untitled",
         artist: item.artistDisplayName || "Unattributed or unknown",
@@ -93,8 +94,10 @@ export async function fetchCombinedArtworks(
         source: "The Metropolitan Museum of Art",
       })) || [];
 
-    const results = [...vaArtworks, ...metArtworks];
-    return results;
+    return {
+      records: [...vaArtworks, ...metArtworks],
+      totalRecordsCount: vaData?.recordsCount + metData?.recordsCount,
+    };
   } catch (err) {
     throw handleAxiosError(err, "default");
   }

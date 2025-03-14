@@ -15,6 +15,7 @@ type SearchResultsProps = {
   isLoading: boolean;
   error: Error | null;
   data: Artwork[];
+  recordsCount: number;
   submittedQuery: string;
   itemWidth: number;
   numColumns: number;
@@ -29,6 +30,7 @@ export default function SearchResults({
   isLoading,
   error,
   data,
+  recordsCount,
   submittedQuery,
   itemWidth,
   numColumns,
@@ -76,9 +78,7 @@ export default function SearchResults({
 
   return (
     <View style={styles.resultsContainer}>
-      <Text style={styles.resultsCount}>
-        {filteredData.length} results found
-      </Text>
+      <Text style={styles.resultsCount}>{recordsCount} results found</Text>
       <TextInput
         style={styles.filterInput}
         placeholder="Filter by artist..."
@@ -147,6 +147,7 @@ const styles = StyleSheet.create({
   },
   filterInput: {
     height: 40,
+    aspectRatio: 1 / 4,
     borderWidth: 1,
     padding: 10,
     paddingHorizontal: 10,

@@ -42,7 +42,7 @@ export default function CreateCollection({
       <TextInput
         style={styles.input}
         placeholder="Name..."
-        placeholderTextColor="rgba(255,255,255,0.5)"
+        placeholderTextColor="rgba(255, 255, 255, 0.77)"
         value={name}
         onChangeText={setName}
       />
