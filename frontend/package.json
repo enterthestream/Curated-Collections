@@ -4,7 +4,6 @@
   "version": "1.0.0",
   "homepage": "https://username.github.io/expo-gh-pages",
   "scripts": {
-    "install": "npm install --legacy-peer-deps --force",
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
