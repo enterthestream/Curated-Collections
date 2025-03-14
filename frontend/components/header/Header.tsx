@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#14181c",
+    backgroundColor: "rgb(7, 27, 48)",
     paddingHorizontal: 16,
     paddingVertical: 12,
     height: Platform.OS === "web" ? 64 : 56,
@@ -82,12 +82,13 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 20,
     fontWeight: "bold",
-    fontFamily: "Cochin",
+    fontFamily: "sans-serif",
+    margin: 20,
   },
   searchText: {
     color: "white",
     fontSize: 14,
-    fontFamily: "Cochin",
+    fontFamily: "sans-serif",
   },
   searchButton: {
     width: 40,
@@ -112,7 +113,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 22,
     fontWeight: "bold",
-    fontFamily: "Cochin",
+    fontFamily: "sans-serif",
   },
   closeButton: {
     width: 40,

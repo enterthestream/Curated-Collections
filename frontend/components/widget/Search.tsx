@@ -6,13 +6,12 @@ import {
   Platform,
   useWindowDimensions,
 } from "react-native";
-import { useArtworksQuery } from "../hooks/useArtworks";
+import { useArtworks } from "../hooks/useArtworks";
 import { useState } from "react";
 import { usePagination } from "../hooks/usePagination";
 import { Artwork } from "@/types.ts/artworks";
 import SearchResults from "../pages/SearchResults";
 import ArtworkDetailView from "../pages/ArtworkDetailView";
-import { useCollections } from "@/context/CollectionsContext";
 
 type SearchProps = {
   searchQuery: string;
@@ -22,8 +21,6 @@ export default function Search({ searchQuery, setSearchQuery }: SearchProps) {
   const [submittedQuery, setSubmittedQuery] = useState<string>("");
   const [selectedArtwork, setSelectedArtwork] = useState<Artwork | null>(null);
   const [isDetailsVisible, setIsDetailsVisible] = useState<boolean>(false);
-
-  const { collections, setCollections } = useCollections();
 
   const { width } = useWindowDimensions();
   const numColumns = width > 1200 ? 4 : width > 900 ? 3 : width > 600 ? 2 : 1;
@@ -39,9 +36,10 @@ export default function Search({ searchQuery, setSearchQuery }: SearchProps) {
 
   const {
     data = [],
+    recordsCount,
     isLoading,
     error,
-  } = useArtworksQuery(submittedQuery, currentPage);
+  } = useArtworks(submittedQuery, currentPage);
 
   const handleSearchSubmit = () => {
     setCurrentPage(1);
@@ -77,6 +75,7 @@ export default function Search({ searchQuery, setSearchQuery }: SearchProps) {
 
       <SearchResults
         data={data}
+        recordsCount={recordsCount}
         isLoading={isLoading}
         error={error}
         submittedQuery={submittedQuery}
@@ -92,7 +91,6 @@ export default function Search({ searchQuery, setSearchQuery }: SearchProps) {
       <ArtworkDetailView
         isDetailVisible={isDetailsVisible}
         artwork={selectedArtwork}
-        collections={collections}
         onClose={handleCloseDetails}
       />
     </View>

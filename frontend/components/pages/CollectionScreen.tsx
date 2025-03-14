@@ -1,21 +1,20 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { FlatList } from "react-native-gesture-handler";
-import exhibitionImage from "../../assets/images/blank-854880_1920.jpg";
 import {
   View,
   StyleSheet,
   Text,
   ActivityIndicator,
   TouchableOpacity,
-  ImageBackground,
   Modal,
+  useWindowDimensions,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import CreateCollection from "../widget/CreateCollection";
 import { Feather } from "@expo/vector-icons";
 import { useCollections } from "@/context/CollectionsContext";
 import CollectionView from "./CollectionView";
-import { useArtworksQuery } from "../hooks/useArtworks";
+import { useArtworks } from "../hooks/useArtworks";
 import { EnrichedCollection } from "@/types.ts/collection";
 import { enrichCollection } from "@/api/api";
 import { deleteArtwork } from "@/api/backendFunctions";
@@ -27,11 +26,15 @@ export default function CollectionScreen() {
 
   const { collections, setCollections, isLoadingCollections } =
     useCollections();
-  const { data: artworks, isLoading: isLoadingArtworks } = useArtworksQuery("");
+  const { data: artworks, isLoading: isLoadingArtworks } = useArtworks("");
   const [enrichedCollection, setEnrichedCollection] =
     useState<EnrichedCollection | null>(null);
   const [isViewingCollection, setIsViewingCollection] = useState(false);
 
+  const { width } = useWindowDimensions();
+  const numColumns =
+    width > 1500 ? 5 : width > 1200 ? 4 : width > 900 ? 3 : width > 600 ? 2 : 1;
+  const itemWidth = (width - (numColumns + 1) * 20) / numColumns - 20;
   const isLoading = isLoadingCollections || isLoadingArtworks;
 
   const handleCollectionClick = async (collectionId: string) => {
@@ -67,7 +70,7 @@ export default function CollectionScreen() {
   );
 
   const handleRemoveArtwork = async (artworkId: string, source: string) => {
-    if (!enrichCollection) return;
+    if (!enrichedCollection) return;
 
     try {
       await deleteArtwork(enrichedCollection?.collectionId, artworkId, source);
@@ -97,83 +100,78 @@ export default function CollectionScreen() {
 
   return (
     <View style={styles.container}>
-      <ImageBackground
-        source={exhibitionImage}
-        resizeMode="cover"
-        style={styles.imageBackground}
-      >
-        <View style={styles.overlayContainer}>
-          <Text style={styles.title}>Your Curated Collections</Text>
+      <View style={styles.overlayContainer}>
+        <Text style={styles.title}>My collections</Text>
 
-          {!isViewingCollection ? (
-            <>
-              <TouchableOpacity
-                style={styles.createButton}
-                onPress={() => setIsCreateVisible(true)}
-              >
-                <Feather
-                  name="plus"
-                  size={18}
-                  color={"white"}
-                  style={styles.buttonIcon}
-                />
-              </TouchableOpacity>
-
-              <FlatList
-                data={collections}
-                keyExtractor={(item) => item.collectionId}
-                contentContainerStyle={styles.listContainer}
-                renderItem={({ item }) => (
-                  <View style={styles.collectionItem}>
-                    <TouchableOpacity
-                      style={styles.viewButton}
-                      onPress={() => handleCollectionClick(item.collectionId)}
-                    >
-                      <Text style={styles.buttonText}>{item.name}</Text>
-                    </TouchableOpacity>
-                  </View>
-                )}
+        {!isViewingCollection ? (
+          <>
+            <TouchableOpacity
+              style={styles.createButton}
+              onPress={() => setIsCreateVisible(true)}
+            >
+              <Feather
+                name="plus"
+                size={24}
+                color={"white"}
+                style={styles.buttonIcon}
               />
-              <Text>Collections loaded: {collections.length}</Text>
-            </>
-          ) : (
-            <View style={styles.contentContainer}>
-              <TouchableOpacity
-                style={styles.backButton}
-                onPress={handleBackToCollections}
-              >
-                <Feather name="arrow-left" size={24} color="white" />
-                <Text style={styles.buttonText}>Back to Collections</Text>
-              </TouchableOpacity>
-              {enrichedCollection && (
-                <CollectionView
-                  isLoading={isLoading}
-                  collection={enrichedCollection}
-                  onRemoveArtwork={handleRemoveArtwork}
-                />
-              )}
-            </View>
-          )}
+            </TouchableOpacity>
 
-          <Modal
-            visible={isCreateVisible}
-            animationType="fade"
-            transparent={true}
-          >
-            <View style={styles.createContainer}>
-              <CreateCollection user={user} onCreate={handleCreateCollection} />
-              <TouchableOpacity
-                onPress={() => {
-                  setIsCreateVisible(false);
-                }}
-                style={styles.closeButton}
-              >
-                <Feather name="x" size={20} color={"white"} />
-              </TouchableOpacity>
-            </View>
-          </Modal>
-        </View>
-      </ImageBackground>
+            <FlatList
+              data={collections}
+              numColumns={numColumns}
+              key={numColumns}
+              keyExtractor={(item) => item.collectionId}
+              contentContainerStyle={styles.listContainer}
+              renderItem={({ item }) => (
+                <View style={[styles.collectionItem, { width: itemWidth }]}>
+                  <TouchableOpacity
+                    style={styles.viewButton}
+                    onPress={() => handleCollectionClick(item.collectionId)}
+                  >
+                    <Text style={styles.buttonText}>{item.name}</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            />
+          </>
+        ) : (
+          <View style={styles.contentContainer}>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={handleBackToCollections}
+            >
+              <Feather name="arrow-left" size={24} color="white" />
+              <Text style={styles.buttonText}>Back to Collections</Text>
+            </TouchableOpacity>
+            {enrichedCollection && (
+              <CollectionView
+                isLoading={isLoading}
+                collection={enrichedCollection}
+                onRemoveArtwork={handleRemoveArtwork}
+              />
+            )}
+          </View>
+        )}
+
+        <Modal
+          visible={isCreateVisible}
+          animationType="fade"
+          transparent={true}
+        >
+          <View style={styles.createContainer}>
+            <CreateCollection user={user} onCreate={handleCreateCollection} />
+            <TouchableOpacity
+              onPress={() => {
+                setIsCreateVisible(false);
+              }}
+              style={styles.closeButton}
+            >
+              <Feather name="x" size={20} color={"white"} />
+            </TouchableOpacity>
+          </View>
+        </Modal>
+      </View>
     </View>
   );
 }
@@ -187,15 +185,23 @@ const styles = StyleSheet.create({
   },
   createContainer: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.9)",
+    justifyContent: "center",
   },
   createButton: {
-    backgroundColor: "rgba(208, 205, 0, 0.6)",
-    padding: 10,
-    borderRadius: 8,
+    backgroundColor: "rgba(7, 27, 75, 0.95)",
+    padding: 15,
+    margin: 20,
+    borderRadius: 16,
     alignItems: "center",
+    width: 60,
+    aspectRatio: 1 / 1,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 2.5,
+    shadowOpacity: 0.25,
+    elevation: 5,
   },
   loadingContainer: {
     flex: 1,
@@ -203,7 +209,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   listContainer: {
-    paddingBottom: 20,
+    padding: 10,
   },
   imageBackground: {
     flex: 1,
@@ -215,26 +221,35 @@ const styles = StyleSheet.create({
   overlayContainer: {
     flex: 1,
     justifyContent: "flex-start",
-    paddingTop: 50,
+    paddingTop: 40,
     paddingHorizontal: 20,
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.1)",
+    backgroundColor: "rgba(225, 225, 221, 0.9)",
   },
   title: {
     fontSize: 24,
     marginBottom: 10,
-    textAlign: "center",
-    color: "white",
-    fontFamily: "Cochin",
+    margin: 20,
+    textAlign: "left",
     fontWeight: "bold",
+    fontFamily: "sans-serif",
+    color: "rgb(7, 27, 48)",
   },
   collectionItem: {
+    margin: 10,
+    height: 200,
     backgroundColor: "rgb(7, 27, 48)",
     marginBottom: 15,
-    borderRadius: 8,
-    padding: 10,
+    borderRadius: 16,
+    padding: 15,
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 2.5,
+    shadowOpacity: 0.25,
+    elevation: 5,
   },
   viewButton: {
     padding: 10,
@@ -255,8 +270,12 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "bold",
+    fontFamily: "sans-serif",
   },
-  buttonIcon: {},
+  buttonIcon: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
   backButton: {
     flexDirection: "row",
     alignItems: "center",

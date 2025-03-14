@@ -1,39 +1,28 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { fetchCombinedArtworks } from "@/api/api";
-import { useEffect, useState } from "react";
 import { usePagination } from "./usePagination";
+import { useEffect } from "react";
 
-export function useArtworksQuery(query: string, currentPage: number = 1) {
-  return useQuery({
+export function useArtworks(query: string, currentPage: number = 1) {
+  const { data, isLoading, error } = useQuery({
     queryKey: ["artworks", query, currentPage],
     queryFn: () => fetchCombinedArtworks(query, currentPage),
+    staleTime: 1000 * 60 * 60,
+    placeholderData: keepPreviousData,
+    enabled: !!query,
   });
-}
-
-export function useArtworks(query: string) {
-  const [data, setData] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const { currentPage, setHasMore } = usePagination();
-
-  const pageSize = 10;
+  const { setHasMore } = usePagination();
 
   useEffect(() => {
-    setIsLoading(true);
-    setError(null);
+    if (data) {
+      setHasMore(data.records.length > 0);
+    }
+  }, [data, setHasMore]);
 
-    fetchCombinedArtworks(query, currentPage)
-      .then((artworks) => {
-        setData(artworks);
-        setHasMore(artworks.length > pageSize);
-      })
-      .catch((error) => {
-        setError(error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, [query, currentPage]);
-
-  return { data, isLoading, error };
+  return {
+    data: data?.records || [],
+    recordsCount: data?.totalRecordsCount || 0,
+    isLoading,
+    error,
+  };
 }

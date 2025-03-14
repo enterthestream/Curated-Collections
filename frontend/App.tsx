@@ -17,7 +17,6 @@ const queryClient = new QueryClient();
 
 export default function App() {
   const user = "royal-user";
-  console.log("App is loading");
 
   return (
     <QueryClientProvider client={queryClient}>
