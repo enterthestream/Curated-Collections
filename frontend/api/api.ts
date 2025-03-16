@@ -104,10 +104,24 @@ export async function fetchCombinedArtworks(
     throw handleAxiosError(err, "default");
   }
 }
+function santizeDescription(text: string | null): string | null {
+  if (!text) return null;
 
+  return text.replace(/<[^>]*>/g, "");
+}
 export async function fetchArtworkDetailsVA(artworkId: string) {
   try {
     const { data } = await vaApi.get(`/museumobject/${artworkId}`);
+
+    const rawDescription =
+      data.record.briefDescription ||
+      data.record.physicalDescription ||
+      data.record.summaryDescription ||
+      null;
+
+    const cleanDescription = rawDescription
+      ? santizeDescription(rawDescription)
+      : null;
 
     return {
       artworkId: data.record.systemNumber,
@@ -116,7 +130,9 @@ export async function fetchArtworkDetailsVA(artworkId: string) {
           ? data.record.titles[0].title
           : "Untitled",
       artist:
-        data.record.artistMakerPerson[0].name.text || "Unattributed or unknown",
+        data.record.artistMakerPerson.length > 0
+          ? data.record.artistMakerPerson[0].name.text
+          : "Unattributed, unknown or not applicable",
       artistBio: null,
       image: data.meta.images?._iiif_image
         ? `${data.meta.images._iiif_image}/full/!300,300/0/default.jpg`
@@ -126,13 +142,10 @@ export async function fetchArtworkDetailsVA(artworkId: string) {
         data.record.materialsAndTechniques ||
         data.record.techniques?.[0]?.text ||
         data.record.materials?.[0]?.text ||
+        data.record.objectType ||
         "Undetermined",
       accessionNumber: data.accessionNumber || null,
-      description:
-        data.record.briefDescription ||
-        data.record.physicalDescription ||
-        data.record.summaryDescription ||
-        null,
+      description: cleanDescription,
       detailsURL: data.meta._links.collection_page.href || null,
       origin:
         data.record.placesOfOrigin?.find(
