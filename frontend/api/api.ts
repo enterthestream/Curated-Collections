@@ -47,7 +47,9 @@ export async function fetchArtworksMet(query: string, currentPage: number = 1) {
             const { data } = await metApi.get(`/objects/${id}`);
             return data;
           } catch (err) {
-            return null;
+            if (axios.isAxiosError(err) && err.response?.status === 404) {
+              return null;
+            }
           }
         })
       );
@@ -106,16 +108,40 @@ export async function fetchCombinedArtworks(
 export async function fetchArtworkDetailsVA(artworkId: string) {
   try {
     const { data } = await vaApi.get(`/museumobject/${artworkId}`);
-    console.log(data, "VA data");
+
     return {
       artworkId: data.record.systemNumber,
-      title: data.record.titles[0].title || "Untitled",
+      title:
+        data.record.titles?.length > 0
+          ? data.record.titles[0].title
+          : "Untitled",
       artist:
         data.record.artistMakerPerson[0].name.text || "Unattributed or unknown",
+      artistBio: null,
       image: data.meta.images?._iiif_image
-        ? `${data.meta.images?._iiif_image}/full/!300,300/0/default.jpg`
+        ? `${data.meta.images._iiif_image}/full/!300,300/0/default.jpg`
         : null,
       source: "Victoria and Albert Museum",
+      medium:
+        data.record.materialsAndTechniques ||
+        data.record.techniques?.[0]?.text ||
+        data.record.materials?.[0]?.text ||
+        "Undetermined",
+      accessionNumber: data.accessionNumber || null,
+      description:
+        data.record.briefDescription ||
+        data.record.physicalDescription ||
+        data.record.summaryDescription ||
+        null,
+      detailsURL: data.meta._links.collection_page.href || null,
+      origin:
+        data.record.placesOfOrigin?.find(
+          (item: { place: { text: string } }) => item.place?.text
+        )?.place?.text || "Unknown",
+      dateProduced:
+        data.record.productionDates?.find(
+          (item: { date: { text: string } }) => item.date?.text
+        )?.date?.text || "Unknown",
     };
   } catch (err) {
     throw handleAxiosError(err, "VA");
@@ -125,12 +151,20 @@ export async function fetchArtworkDetailsVA(artworkId: string) {
 export async function fetchArtworkDetailsMet(artworkId: string) {
   try {
     const { data } = await metApi.get(`/objects/${artworkId}`);
+
     return {
       artworkId: data.objectID.toString(),
       title: data.title || "Untitled",
       artist: data.artistDisplayName || "Unattributed or unknown",
+      artistBio: data.artistDisplayBio || null,
       image: data.primaryImageSmall || null,
       source: "The Metropolitan Museum of Art",
+      medium: data.medium || "Undetermined",
+      accessionNumber: data.accessionNumber || null,
+      description: null,
+      detailsURL: data.objectURL || null,
+      origin: data.city || "Unknown",
+      dateProduced: data.objectDate || "Unknown",
     };
   } catch (err) {
     throw handleAxiosError(err, "MET");
@@ -153,8 +187,15 @@ export async function fetchArtworkBySource(artworkId: string, source: string) {
       artworkId: artworkId,
       title: "Error loading artwork",
       artist: "Unknown",
+      artistBio: null,
       image: null,
       source: source,
+      detailsURL: null,
+      medium: null,
+      accessionNumber: null,
+      description: null,
+      origin: null,
+      dateProduced: null,
     };
   }
 }
@@ -169,7 +210,7 @@ export async function enrichCollection(collection: Collection) {
       fetchArtworkBySource(ref.artworkId, ref.source)
     )
   );
-
+  console.log(enrichedArtworks, "enrichedArtworks");
   return {
     ...collection,
     artworks: enrichedArtworks,
