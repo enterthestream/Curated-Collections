@@ -1,6 +1,6 @@
 import { postArtwork } from "@/api/backendFunctions";
 import { Artwork } from "@/types.ts/artworks";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import {
   Modal,
   TouchableOpacity,
@@ -10,12 +10,14 @@ import {
   Text,
   Image,
   ActivityIndicator,
+  Linking,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import CollectionSelector from "../widget/CollectionSelector";
 import { ScrollView } from "react-native-gesture-handler";
 import { useCollections } from "@/context/CollectionsContext";
+import ArtworkDetail from "../widget/ArtworkDetail";
 
 type ArtworkDetailViewProps = {
   isDetailVisible: boolean;
@@ -33,6 +35,8 @@ export default function ArtworkDetailView({
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [addSuccess, setAddSuccess] = useState<boolean>(false);
   const { width, height } = useWindowDimensions();
+
+  console.log("Rendering ArtworkDetailView with:", artwork, isDetailVisible);
 
   const handleAddToCollection = async () => {
     if (!artwork || !selectedId) return;
@@ -80,7 +84,7 @@ export default function ArtworkDetailView({
         <View
           style={[
             styles.artworkContent,
-            { width: width > 800 ? "70%" : "90%", maxHeight: height * 0.8 },
+            { width: width > 800 ? "50%" : "100%" },
           ]}
         >
           <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
@@ -108,18 +112,33 @@ export default function ArtworkDetailView({
               </View>
 
               <View style={styles.detailsContainer}>
-                <Text style={styles.detailLabel}>Artist:</Text>
-                <Text style={styles.detailText}>{artwork.artist}</Text>
-
-                <Text style={styles.detailLabel}>Source:</Text>
-                <Text style={styles.detailText}>{artwork.source}</Text>
-
-                {artwork.description && (
-                  <>
-                    <Text style={styles.detailLabel}>Description:</Text>
-                    <Text style={styles.detailText}>{artwork.description}</Text>
-                  </>
-                )}
+                <ArtworkDetail label="Artist" value={artwork.artist} />
+                <ArtworkDetail label="Artist Bio" value={artwork.artistBio} />
+                <ArtworkDetail label="Medium" value={artwork.medium} />
+                <ArtworkDetail label="Place of Origin" value={artwork.origin} />
+                <ArtworkDetail
+                  label="Date Produced"
+                  value={artwork.dateProduced}
+                />
+                <ArtworkDetail
+                  label="Description"
+                  value={artwork.description}
+                />
+                <ArtworkDetail label="Source" value={artwork.source} />
+                <ArtworkDetail
+                  label="Source Reference"
+                  value={artwork.detailsURL}
+                  isLink={true}
+                  onPress={() =>
+                    artwork.detailsURL
+                      ? Linking.openURL(artwork.detailsURL)
+                      : null
+                  }
+                />
+                <ArtworkDetail
+                  label="Accession Number"
+                  value={artwork.accessionNumber}
+                />
               </View>
               {collections.length > 0 ? (
                 <View style={styles.collectionSection}>
@@ -133,7 +152,7 @@ export default function ArtworkDetailView({
                       </Text>
                     </View>
                   ) : (
-                    <>
+                    <Fragment>
                       <CollectionSelector
                         collections={collections}
                         selectedId={selectedId}
@@ -157,7 +176,7 @@ export default function ArtworkDetailView({
                           )}
                         </TouchableOpacity>
                       </View>
-                    </>
+                    </Fragment>
                   )}
                 </View>
               ) : (
@@ -222,6 +241,9 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontFamily: "Cochin",
+    zIndex: 100,
+    alignItems: "center",
+    justifyContent: "center",
   },
   detailsContainer: {
     marginBottom: 20,

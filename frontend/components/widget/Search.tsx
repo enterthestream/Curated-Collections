@@ -12,6 +12,7 @@ import { usePagination } from "../hooks/usePagination";
 import { Artwork } from "@/types.ts/artworks";
 import SearchResults from "../pages/SearchResults";
 import ArtworkDetailView from "../pages/ArtworkDetailView";
+import { fetchArtworkBySource } from "@/api/api";
 
 type SearchProps = {
   searchQuery: string;
@@ -49,9 +50,29 @@ export default function Search({ searchQuery, setSearchQuery }: SearchProps) {
     }
   };
 
-  const handleArtworkSelect = (artwork: Artwork) => {
+  const handleArtworkSelect = async (artwork: Artwork) => {
+    if (!artwork || !artwork.artworkId || !artwork.source) {
+      console.error("Invalid artwork data:", artwork);
+      return;
+    }
     setSelectedArtwork(artwork);
     setIsDetailsVisible(true);
+
+    try {
+      console.log(
+        `Fetching details for ${artwork.artworkId} from ${artwork.source}`
+      );
+      const fullDetails = await fetchArtworkBySource(
+        artwork.artworkId,
+        artwork.source
+      );
+      setSelectedArtwork(fullDetails);
+    } catch (err) {
+      console.error(
+        `Error in handleArtworkSelect for ${artwork?.artworkId}:`,
+        err
+      );
+    }
   };
 
   const handleCloseDetails = () => {
@@ -59,6 +80,25 @@ export default function Search({ searchQuery, setSearchQuery }: SearchProps) {
     setSelectedArtwork(null);
   };
 
+  const handleNextPageWithClose = () => {
+    console.log("Closing details and going to next page"); // Add logging
+    setIsDetailsVisible(false);
+    setSelectedArtwork(null);
+    setTimeout(() => {
+      // Add a small delay
+      handleNextPage();
+    }, 50);
+  };
+
+  const handlePrevPageWithClose = () => {
+    console.log("Closing details and going to previous page"); // Add logging
+    setIsDetailsVisible(false);
+    setSelectedArtwork(null);
+    setTimeout(() => {
+      // Add a small delay
+      handlePrevPage();
+    }, 50);
+  };
   return (
     <View style={[styles.container, { width: width }]}>
       <View style={styles.searchBarContainer}>
@@ -83,8 +123,8 @@ export default function Search({ searchQuery, setSearchQuery }: SearchProps) {
         itemWidth={itemWidth}
         currentPage={currentPage}
         hasMore={hasMore}
-        handleNextPage={handleNextPage}
-        handlePrevPage={handlePrevPage}
+        handleNextPage={handleNextPageWithClose}
+        handlePrevPage={handlePrevPageWithClose}
         onArtworkSelect={handleArtworkSelect}
       />
 

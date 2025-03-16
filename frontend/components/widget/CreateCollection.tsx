@@ -79,6 +79,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 4,
     fontFamily: "Cochin",
+    color: "white",
   },
   button: {
     backgroundColor: "#FFD425",
