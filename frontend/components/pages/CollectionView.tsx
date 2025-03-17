@@ -4,6 +4,7 @@ import { EnrichedCollection } from "@/types.ts/collection";
 import { useState } from "react";
 import { Artwork } from "@/types.ts/artworks";
 import ArtworkGrid from "../widget/ArtworkGrid";
+import { fetchArtworkBySource } from "@/api/api";
 
 type CollectionViewProps = {
   isLoading: boolean;
@@ -27,11 +28,31 @@ export default function CollectionView({
     );
   }
 
-  const handleArtworkSelect = (artwork: Artwork) => {
+  const handleArtworkSelect = async (artwork: Artwork) => {
+    if (!artwork || !artwork.artworkId || !artwork.source) {
+      console.error("Invalid artwork data:", artwork);
+      return;
+    }
     setSelectedArtwork(artwork);
     setIsDetailsVisible(true);
-  };
 
+    try {
+      const fullDetails = await fetchArtworkBySource(
+        artwork.artworkId,
+        artwork.source
+      );
+      setSelectedArtwork(fullDetails);
+    } catch (err) {
+      console.error(
+        `Error in handleArtworkSelect for ${artwork?.artworkId}:`,
+        err
+      );
+    }
+  };
+  const handleCloseDetails = () => {
+    setIsDetailsVisible(false);
+    setSelectedArtwork(null);
+  };
   return (
     <View style={styles.container}>
       <ArtworkGrid
@@ -40,7 +61,10 @@ export default function CollectionView({
         contentContainerStyle={styles.listContainer}
         isLoading={isLoading}
         onRemoveArtwork={onRemoveArtwork}
+        isDetailsVisible={isDetailsVisible}
+        selectedArtwork={selectedArtwork}
         header={<Text style={styles.collectionName}>{collection.name}</Text>}
+        handleCloseDetails={handleCloseDetails}
       />
     </View>
   );

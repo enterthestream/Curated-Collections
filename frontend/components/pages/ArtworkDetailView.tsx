@@ -20,13 +20,13 @@ import { useCollections } from "@/context/CollectionsContext";
 import ArtworkDetail from "../widget/ArtworkDetail";
 
 type ArtworkDetailViewProps = {
-  isDetailVisible: boolean;
+  isDetailsVisible: boolean;
   artwork: Artwork | null;
   onClose: () => void;
 };
 
 export default function ArtworkDetailView({
-  isDetailVisible,
+  isDetailsVisible,
   artwork,
   onClose,
 }: ArtworkDetailViewProps) {
@@ -73,7 +73,7 @@ export default function ArtworkDetailView({
 
   return (
     <Modal
-      visible={isDetailVisible}
+      visible={isDetailsVisible}
       transparent={true}
       animationType="fade"
       onRequestClose={handleClose}

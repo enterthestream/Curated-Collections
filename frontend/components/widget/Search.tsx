@@ -11,7 +11,6 @@ import { useState } from "react";
 import { usePagination } from "../hooks/usePagination";
 import { Artwork } from "@/types.ts/artworks";
 import SearchResults from "../pages/SearchResults";
-import ArtworkDetailView from "../pages/ArtworkDetailView";
 import { fetchArtworkBySource } from "@/api/api";
 
 type SearchProps = {
@@ -119,12 +118,9 @@ export default function Search({ searchQuery, setSearchQuery }: SearchProps) {
         handleNextPage={handleNextPageWithClose}
         handlePrevPage={handlePrevPageWithClose}
         onArtworkSelect={handleArtworkSelect}
-      />
-
-      <ArtworkDetailView
-        isDetailVisible={isDetailsVisible}
-        artwork={selectedArtwork}
-        onClose={handleCloseDetails}
+        isDetailsVisible={isDetailsVisible}
+        selectedArtwork={selectedArtwork}
+        handleCloseDetails={handleCloseDetails}
       />
     </View>
   );

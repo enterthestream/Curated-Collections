@@ -7,7 +7,8 @@ import {
   FlatList,
 } from "react-native";
 import ArtworkCard from "../pages/ArtworksCard";
-import { ReactNode } from "react";
+import ArtworkDetailView from "../pages/ArtworkDetailView";
+import { Fragment, ReactNode } from "react";
 
 type ArtworkGridProps = {
   isLoading: boolean;
@@ -20,6 +21,9 @@ type ArtworkGridProps = {
   footer?: React.ReactElement | null;
   renderItemExtra?: (artwork: Artwork) => ReactNode;
   onRemoveArtwork?: (artworkId: string, source: string) => void;
+  isDetailsVisible: boolean;
+  selectedArtwork: Artwork | null;
+  handleCloseDetails: () => void;
 };
 
 export default function ArtworkGrid({
@@ -32,7 +36,10 @@ export default function ArtworkGrid({
   contentContainerStyle,
   header,
   footer,
+  isDetailsVisible,
   renderItemExtra,
+  selectedArtwork,
+  handleCloseDetails,
 }: ArtworkGridProps) {
   const { width } = useWindowDimensions();
 
@@ -60,27 +67,34 @@ export default function ArtworkGrid({
   }
 
   return (
-    <FlatList
-      data={data}
-      numColumns={numColumns}
-      keyExtractor={(item) => item.artworkId}
-      key={`columns-${numColumns}`}
-      contentContainerStyle={[styles.listContainer, contentContainerStyle]}
-      ListHeaderComponent={header}
-      ListFooterComponent={footer}
-      renderItem={({ item }) => (
-        <View style={styles.itemContainer}>
-          <ArtworkCard
-            artwork={item}
-            width={itemWidth}
-            onPress={onArtworkSelect}
-            renderItemExtra={renderItemExtra}
-            onRemoveArtwork={onRemoveArtwork}
-          />
-          {renderItemExtra && renderItemExtra(item)}
-        </View>
-      )}
-    />
+    <Fragment>
+      <FlatList
+        data={data}
+        numColumns={numColumns}
+        keyExtractor={(item) => item.artworkId}
+        key={`columns-${numColumns}`}
+        contentContainerStyle={[styles.listContainer, contentContainerStyle]}
+        ListHeaderComponent={header}
+        ListFooterComponent={footer}
+        renderItem={({ item }) => (
+          <View style={styles.itemContainer}>
+            <ArtworkCard
+              artwork={item}
+              width={itemWidth}
+              onPress={onArtworkSelect}
+              renderItemExtra={renderItemExtra}
+              onRemoveArtwork={onRemoveArtwork}
+            />
+            {renderItemExtra && renderItemExtra(item)}
+          </View>
+        )}
+      />
+      <ArtworkDetailView
+        isDetailsVisible={isDetailsVisible}
+        artwork={selectedArtwork}
+        onClose={handleCloseDetails}
+      />
+    </Fragment>
   );
 }
 

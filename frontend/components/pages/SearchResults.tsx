@@ -1,14 +1,7 @@
-import {
-  StyleSheet,
-  View,
-  Text,
-  FlatList,
-  ActivityIndicator,
-} from "react-native";
+import { StyleSheet, View, Text, ActivityIndicator } from "react-native";
 import Pagination from "../widget/Pagination";
 import { Artwork } from "@/types.ts/artworks";
-import ArtworkCard from "./ArtworksCard";
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import { TextInput } from "react-native-gesture-handler";
 import ArtworkGrid from "../widget/ArtworkGrid";
 
@@ -25,6 +18,9 @@ type SearchResultsProps = {
   handleNextPage: () => void;
   handlePrevPage: () => void;
   onArtworkSelect: (artwork: Artwork) => void;
+  isDetailsVisible: boolean;
+  handleCloseDetails: () => void;
+  selectedArtwork: Artwork | null;
 };
 
 export default function SearchResults({
@@ -40,6 +36,9 @@ export default function SearchResults({
   handleNextPage,
   handlePrevPage,
   onArtworkSelect,
+  isDetailsVisible,
+  selectedArtwork,
+  handleCloseDetails,
 }: SearchResultsProps) {
   const [filterQuery, setFilterQuery] = useState<string>("");
 
@@ -86,6 +85,9 @@ export default function SearchResults({
         numColumns={numColumns}
         itemWidth={itemWidth}
         contentContainerStyle={styles.listContainer}
+        selectedArtwork={selectedArtwork}
+        isDetailsVisible={isDetailsVisible}
+        handleCloseDetails={handleCloseDetails}
         header={
           <View>
             <Text style={styles.resultsCount}>
