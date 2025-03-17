@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { Fragment, useCallback, useState } from "react";
 import { FlatList } from "react-native-gesture-handler";
 import {
   View,
@@ -24,12 +24,18 @@ export default function CollectionScreen() {
   const [isCreateVisible, setIsCreateVisible] = useState(false);
   const navigation = useNavigation();
 
-  const { collections, setCollections, isLoadingCollections } =
-    useCollections();
+  const {
+    collections,
+    setCollections,
+    isLoadingCollections,
+    refreshCollections,
+  } = useCollections();
   const { data: artworks, isLoading: isLoadingArtworks } = useArtworks("");
   const [enrichedCollection, setEnrichedCollection] =
     useState<EnrichedCollection | null>(null);
   const [isViewingCollection, setIsViewingCollection] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [currCollectionId, setCurrCollectionId] = useState<string | null>(null);
 
   const { width } = useWindowDimensions();
   const numColumns =
@@ -38,28 +44,35 @@ export default function CollectionScreen() {
   const isLoading = isLoadingCollections || isLoadingArtworks;
 
   const handleCollectionClick = async (collectionId: string) => {
-    const selectedCollection = collections.find(
-      (collection) => collection.collectionId === collectionId
-    );
-    if (!selectedCollection) {
-      console.log("Collection not found");
-      return;
-    }
-
-    setEnrichedCollection({ ...selectedCollection, artworks: [] });
-    setIsViewingCollection(true);
+    setCurrCollectionId(collectionId);
+    setIsRefreshing(true);
 
     try {
-      const enrichedCollection = await enrichCollection(selectedCollection);
+      await refreshCollections();
 
+      const selectedCollection = collections.find(
+        (collection) => collection.collectionId === collectionId
+      );
+      if (!selectedCollection) {
+        setIsRefreshing(false);
+        return;
+      }
+
+      setEnrichedCollection({ ...selectedCollection, artworks: [] });
+      setIsViewingCollection(true);
+
+      const enrichedCollection = await enrichCollection(selectedCollection);
       setEnrichedCollection(enrichedCollection);
     } catch (error) {
       console.error("Error enriching collection:", error);
+    } finally {
+      setIsRefreshing(false);
     }
   };
   const handleBackToCollections = () => {
     setIsViewingCollection(false);
     setEnrichedCollection(null);
+    setCurrCollectionId(null);
   };
 
   const handleCreateCollection = useCallback(
@@ -72,25 +85,25 @@ export default function CollectionScreen() {
   const handleRemoveArtwork = async (artworkId: string, source: string) => {
     if (!enrichedCollection) return;
 
+    setEnrichedCollection((prev) =>
+      prev
+        ? {
+            ...prev,
+            artworks: prev.artworks.filter(
+              (art) => art.artworkId !== artworkId
+            ),
+          }
+        : null
+    );
     try {
       await deleteArtwork(enrichedCollection?.collectionId, artworkId, source);
-
-      setEnrichedCollection((prev) =>
-        prev
-          ? {
-              ...prev,
-              artworks: prev.artworks.filter(
-                (art) => art.artworkId !== artworkId
-              ),
-            }
-          : null
-      );
+      await refreshCollections();
     } catch (err) {
       console.error("Error removing artwork");
     }
   };
 
-  if (isLoading) {
+  if (isLoading && !isViewingCollection) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={"#FFD425"} />
@@ -104,7 +117,7 @@ export default function CollectionScreen() {
         <Text style={styles.title}>My collections</Text>
 
         {!isViewingCollection ? (
-          <>
+          <Fragment>
             <TouchableOpacity
               style={styles.createButton}
               onPress={() => setIsCreateVisible(true)}
@@ -134,15 +147,14 @@ export default function CollectionScreen() {
                 </View>
               )}
             />
-          </>
+          </Fragment>
         ) : (
           <View style={styles.contentContainer}>
             <TouchableOpacity
               style={styles.backButton}
               onPress={handleBackToCollections}
             >
-              <Feather name="arrow-left" size={24} color="white" />
-              <Text style={styles.buttonText}>Back to Collections</Text>
+              <Feather name="arrow-left" size={24} color="rgba(7, 27, 75)" />
             </TouchableOpacity>
             {enrichedCollection && (
               <CollectionView
@@ -181,7 +193,6 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    padding: 20,
   },
   createContainer: {
     flex: 1,
@@ -268,9 +279,10 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "white",
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: "bold",
-    fontFamily: "sans-serif",
+    fontFamily: "cochin",
+    letterSpacing: 1.5,
   },
   buttonIcon: {
     alignItems: "center",
@@ -280,5 +292,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
+    width: 40,
+    padding: 5,
   },
 });

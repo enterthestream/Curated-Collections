@@ -36,8 +36,6 @@ export default function ArtworkDetailView({
   const [addSuccess, setAddSuccess] = useState<boolean>(false);
   const { width, height } = useWindowDimensions();
 
-  console.log("Rendering ArtworkDetailView with:", artwork, isDetailVisible);
-
   const handleAddToCollection = async () => {
     if (!artwork || !selectedId) return;
 

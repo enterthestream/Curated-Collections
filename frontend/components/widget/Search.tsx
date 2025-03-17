@@ -59,9 +59,6 @@ export default function Search({ searchQuery, setSearchQuery }: SearchProps) {
     setIsDetailsVisible(true);
 
     try {
-      console.log(
-        `Fetching details for ${artwork.artworkId} from ${artwork.source}`
-      );
       const fullDetails = await fetchArtworkBySource(
         artwork.artworkId,
         artwork.source
@@ -81,21 +78,17 @@ export default function Search({ searchQuery, setSearchQuery }: SearchProps) {
   };
 
   const handleNextPageWithClose = () => {
-    console.log("Closing details and going to next page"); // Add logging
     setIsDetailsVisible(false);
     setSelectedArtwork(null);
     setTimeout(() => {
-      // Add a small delay
       handleNextPage();
     }, 50);
   };
 
   const handlePrevPageWithClose = () => {
-    console.log("Closing details and going to previous page"); // Add logging
     setIsDetailsVisible(false);
     setSelectedArtwork(null);
     setTimeout(() => {
-      // Add a small delay
       handlePrevPage();
     }, 50);
   };

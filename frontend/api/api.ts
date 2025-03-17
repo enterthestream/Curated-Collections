@@ -194,8 +194,6 @@ export async function fetchArtworkBySource(artworkId: string, source: string) {
       throw new Error("Unknown source: " + source);
     }
   } catch (error) {
-    console.error(`Error fetching artwork ${artworkId}:`, error);
-
     return {
       artworkId: artworkId,
       title: "Error loading artwork",
@@ -223,7 +221,6 @@ export async function enrichCollection(collection: Collection) {
       fetchArtworkBySource(ref.artworkId, ref.source)
     )
   );
-  console.log(enrichedArtworks, "enrichedArtworks");
   return {
     ...collection,
     artworks: enrichedArtworks,
