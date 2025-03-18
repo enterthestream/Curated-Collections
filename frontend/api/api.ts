@@ -132,7 +132,7 @@ export async function fetchArtworkDetailsVA(artworkId: string) {
       artist:
         data.record.artistMakerPerson.length > 0
           ? data.record.artistMakerPerson[0].name.text
-          : "Unattributed, unknown or not applicable",
+          : "Unattributed or not applicable",
       artistBio: null,
       image: data.meta.images?._iiif_image
         ? `${data.meta.images._iiif_image}/full/!300,300/0/default.jpg`
@@ -194,8 +194,6 @@ export async function fetchArtworkBySource(artworkId: string, source: string) {
       throw new Error("Unknown source: " + source);
     }
   } catch (error) {
-    console.error(`Error fetching artwork ${artworkId}:`, error);
-
     return {
       artworkId: artworkId,
       title: "Error loading artwork",
@@ -223,7 +221,6 @@ export async function enrichCollection(collection: Collection) {
       fetchArtworkBySource(ref.artworkId, ref.source)
     )
   );
-  console.log(enrichedArtworks, "enrichedArtworks");
   return {
     ...collection,
     artworks: enrichedArtworks,

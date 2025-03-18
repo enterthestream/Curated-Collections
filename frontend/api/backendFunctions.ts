@@ -3,17 +3,6 @@ const api = axios.create({
   baseURL: "https://curated-collections.onrender.com",
 });
 
-axios.interceptors.request.use(
-  (request) => {
-    console.log("Request sent to:", request.url);
-    console.log("Request data:", request.data);
-    return request;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
 type Collection = {
   user: string;
   collectionId: string;
@@ -75,7 +64,6 @@ export async function deleteArtwork(
   }
   const encodedSource = encodeURIComponent(source);
   const requestUrl = `/collections/${collectionId}/artworks/${artworkId}?source=${encodedSource}`;
-  console.log("Request URL:", requestUrl);
   try {
     const { data } = await api.delete(requestUrl);
     return data;

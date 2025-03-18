@@ -1,6 +1,5 @@
-import { postArtwork } from "@/api/backendFunctions";
 import { Artwork } from "@/types.ts/artworks";
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import {
   Modal,
   TouchableOpacity,
@@ -9,7 +8,6 @@ import {
   StyleSheet,
   Text,
   Image,
-  ActivityIndicator,
   Linking,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -20,49 +18,22 @@ import { useCollections } from "@/context/CollectionsContext";
 import ArtworkDetail from "../widget/ArtworkDetail";
 
 type ArtworkDetailViewProps = {
-  isDetailVisible: boolean;
+  isDetailsVisible: boolean;
   artwork: Artwork | null;
   onClose: () => void;
+  inCollectionView?: boolean;
 };
 
 export default function ArtworkDetailView({
-  isDetailVisible,
+  isDetailsVisible,
+  inCollectionView,
   artwork,
   onClose,
 }: ArtworkDetailViewProps) {
-  const { collections, setCollections, refreshCollections } = useCollections();
+  const { collections } = useCollections();
   const [selectedId, setSelectedId] = useState<string>("");
-  const [isAdding, setIsAdding] = useState<boolean>(false);
   const [addSuccess, setAddSuccess] = useState<boolean>(false);
   const { width, height } = useWindowDimensions();
-
-  console.log("Rendering ArtworkDetailView with:", artwork, isDetailVisible);
-
-  const handleAddToCollection = async () => {
-    if (!artwork || !selectedId) return;
-
-    setIsAdding(true);
-
-    setCollections((prev) =>
-      prev.map((collection) =>
-        collection.collectionId === selectedId
-          ? { ...collection, artworks: [...collection.artworks, artwork] }
-          : collection
-      )
-    );
-
-    try {
-      await postArtwork(selectedId, artwork.artworkId, artwork.source);
-
-      await refreshCollections();
-
-      setAddSuccess(true);
-    } catch (err) {
-      console.error("Failed to add artwork to collection", err);
-    } finally {
-      setIsAdding(false);
-    }
-  };
 
   const handleClose = () => {
     setSelectedId("");
@@ -75,7 +46,7 @@ export default function ArtworkDetailView({
 
   return (
     <Modal
-      visible={isDetailVisible}
+      visible={isDetailsVisible}
       transparent={true}
       animationType="fade"
       onRequestClose={handleClose}
@@ -140,53 +111,39 @@ export default function ArtworkDetailView({
                   value={artwork.accessionNumber}
                 />
               </View>
-              {collections.length > 0 ? (
-                <View style={styles.collectionSection}>
-                  <Text style={styles.sectionTitle}>Add to Collection</Text>
+              {!inCollectionView &&
+                (collections.length > 0 ? (
+                  <View style={styles.collectionSection}>
+                    <Text style={styles.sectionTitle}>Add to Collection</Text>
 
-                  {addSuccess ? (
-                    <View style={styles.successMessage}>
-                      <AntDesign name="checkcircle" size={24} color="#4CAF50" />
-                      <Text style={styles.successText}>
-                        Added to collection
-                      </Text>
-                    </View>
-                  ) : (
-                    <Fragment>
+                    {addSuccess ? (
+                      <View style={styles.successMessage}>
+                        <AntDesign
+                          name="checkcircle"
+                          size={24}
+                          color="#4CAF50"
+                        />
+                        <Text style={styles.successText}>
+                          Added to collection
+                        </Text>
+                      </View>
+                    ) : (
                       <CollectionSelector
-                        collections={collections}
+                        artwork={artwork}
                         selectedId={selectedId}
                         onSelect={handleSelectCollection}
+                        setAddSuccess={setAddSuccess}
                       />
-                      <View style={{ width: "100%" }}>
-                        <TouchableOpacity
-                          style={[
-                            styles.addButton,
-                            { opacity: !selectedId || isAdding ? 0.5 : 1 },
-                          ]}
-                          onPress={handleAddToCollection}
-                          disabled={!selectedId || isAdding}
-                        >
-                          {isAdding ? (
-                            <ActivityIndicator size="small" color="white" />
-                          ) : (
-                            <View style={styles.addButton}>
-                              <AntDesign name="plus" size={18} color="white" />
-                            </View>
-                          )}
-                        </TouchableOpacity>
-                      </View>
-                    </Fragment>
-                  )}
-                </View>
-              ) : (
-                <View style={styles.noCollectionsMsg}>
-                  <Text style={styles.noText}>
-                    You don't have any collections yet. Create a collection to
-                    save artworks.
-                  </Text>
-                </View>
-              )}
+                    )}
+                  </View>
+                ) : (
+                  <View style={styles.noCollectionsMsg}>
+                    <Text style={styles.noText}>
+                      You don't have any collections yet. Create a collection to
+                      save artworks.
+                    </Text>
+                  </View>
+                ))}
             </ScrollView>
           )}
         </View>
@@ -198,7 +155,7 @@ export default function ArtworkDetailView({
 const styles = StyleSheet.create({
   artworkOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.7)",
+    backgroundColor: "rgba(0,0,0,0.4)",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -222,7 +179,7 @@ const styles = StyleSheet.create({
     padding: 5,
     color: "white",
     fontFamily: "Cochin",
-    fontSize: 16,
+    fontSize: 18,
     textAlign: "center",
     marginBottom: 5,
   },
@@ -273,13 +230,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     fontFamily: "Cochin",
   },
-  addButton: {
-    backgroundColor: "rgba(255, 212, 37, 1)",
-    padding: 12,
-    borderRadius: 6,
-    alignItems: "center",
-    justifyContent: "center",
-  },
+
   noCollectionsMsg: {
     padding: 15,
     backgroundColor: "rgba(255,255,255,0.05)",

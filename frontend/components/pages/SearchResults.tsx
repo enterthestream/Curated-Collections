@@ -1,15 +1,9 @@
-import {
-  StyleSheet,
-  View,
-  Text,
-  FlatList,
-  ActivityIndicator,
-} from "react-native";
+import { StyleSheet, View, Text, ActivityIndicator } from "react-native";
 import Pagination from "../widget/Pagination";
 import { Artwork } from "@/types.ts/artworks";
-import ArtworkCard from "./ArtworksCard";
 import { useState } from "react";
 import { TextInput } from "react-native-gesture-handler";
+import ArtworkGrid from "../widget/ArtworkGrid";
 
 type SearchResultsProps = {
   isLoading: boolean;
@@ -24,6 +18,9 @@ type SearchResultsProps = {
   handleNextPage: () => void;
   handlePrevPage: () => void;
   onArtworkSelect: (artwork: Artwork) => void;
+  isDetailsVisible: boolean;
+  handleCloseDetails: () => void;
+  selectedArtwork: Artwork | null;
 };
 
 export default function SearchResults({
@@ -39,6 +36,9 @@ export default function SearchResults({
   handleNextPage,
   handlePrevPage,
   onArtworkSelect,
+  isDetailsVisible,
+  selectedArtwork,
+  handleCloseDetails,
 }: SearchResultsProps) {
   const [filterQuery, setFilterQuery] = useState<string>("");
 
@@ -78,32 +78,37 @@ export default function SearchResults({
 
   return (
     <View style={styles.resultsContainer}>
-      <Text style={styles.resultsCount}>{recordsCount} results found</Text>
-      <TextInput
-        style={styles.filterInput}
-        placeholder="Filter by artist..."
-        value={filterQuery}
-        onChangeText={setFilterQuery}
-      />
-      <FlatList
+      <ArtworkGrid
         data={filteredData}
+        onArtworkSelect={onArtworkSelect}
+        isLoading={isLoading}
         numColumns={numColumns}
-        keyExtractor={(item) => item.artworkId}
-        key={`columns-${numColumns}`}
+        itemWidth={itemWidth}
         contentContainerStyle={styles.listContainer}
-        renderItem={({ item }) => (
-          <ArtworkCard
-            artwork={item}
-            width={itemWidth}
-            onPress={onArtworkSelect}
+        selectedArtwork={selectedArtwork}
+        isDetailsVisible={isDetailsVisible}
+        handleCloseDetails={handleCloseDetails}
+        header={
+          <View>
+            <Text style={styles.resultsCount}>
+              {recordsCount} results found
+            </Text>
+            <TextInput
+              style={styles.filterInput}
+              placeholder="Filter by artist..."
+              value={filterQuery}
+              onChangeText={setFilterQuery}
+            />
+          </View>
+        }
+        footer={
+          <Pagination
+            handleNextPage={handleNextPage}
+            handlePrevPage={handlePrevPage}
+            currentPage={currentPage}
+            hasMore={hasMore}
           />
-        )}
-      />
-      <Pagination
-        handleNextPage={handleNextPage}
-        handlePrevPage={handlePrevPage}
-        currentPage={currentPage}
-        hasMore={hasMore}
+        }
       />
     </View>
   );

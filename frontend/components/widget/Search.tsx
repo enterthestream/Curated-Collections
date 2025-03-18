@@ -11,7 +11,6 @@ import { useState } from "react";
 import { usePagination } from "../hooks/usePagination";
 import { Artwork } from "@/types.ts/artworks";
 import SearchResults from "../pages/SearchResults";
-import ArtworkDetailView from "../pages/ArtworkDetailView";
 import { fetchArtworkBySource } from "@/api/api";
 
 type SearchProps = {
@@ -24,7 +23,18 @@ export default function Search({ searchQuery, setSearchQuery }: SearchProps) {
   const [isDetailsVisible, setIsDetailsVisible] = useState<boolean>(false);
 
   const { width } = useWindowDimensions();
-  const numColumns = width > 1200 ? 4 : width > 900 ? 3 : width > 600 ? 2 : 1;
+  const numColumns =
+    width > 1800
+      ? 6
+      : width > 1500
+      ? 5
+      : width > 1200
+      ? 4
+      : width > 900
+      ? 3
+      : width > 600
+      ? 2
+      : 1;
   const itemWidth = (width - (numColumns + 1) * 20) / numColumns - 20;
 
   const {
@@ -59,9 +69,6 @@ export default function Search({ searchQuery, setSearchQuery }: SearchProps) {
     setIsDetailsVisible(true);
 
     try {
-      console.log(
-        `Fetching details for ${artwork.artworkId} from ${artwork.source}`
-      );
       const fullDetails = await fetchArtworkBySource(
         artwork.artworkId,
         artwork.source
@@ -81,21 +88,17 @@ export default function Search({ searchQuery, setSearchQuery }: SearchProps) {
   };
 
   const handleNextPageWithClose = () => {
-    console.log("Closing details and going to next page"); // Add logging
     setIsDetailsVisible(false);
     setSelectedArtwork(null);
     setTimeout(() => {
-      // Add a small delay
       handleNextPage();
     }, 50);
   };
 
   const handlePrevPageWithClose = () => {
-    console.log("Closing details and going to previous page"); // Add logging
     setIsDetailsVisible(false);
     setSelectedArtwork(null);
     setTimeout(() => {
-      // Add a small delay
       handlePrevPage();
     }, 50);
   };
@@ -126,12 +129,9 @@ export default function Search({ searchQuery, setSearchQuery }: SearchProps) {
         handleNextPage={handleNextPageWithClose}
         handlePrevPage={handlePrevPageWithClose}
         onArtworkSelect={handleArtworkSelect}
-      />
-
-      <ArtworkDetailView
-        isDetailVisible={isDetailsVisible}
-        artwork={selectedArtwork}
-        onClose={handleCloseDetails}
+        isDetailsVisible={isDetailsVisible}
+        selectedArtwork={selectedArtwork}
+        handleCloseDetails={handleCloseDetails}
       />
     </View>
   );

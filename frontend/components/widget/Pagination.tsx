@@ -19,13 +19,13 @@ export default function Pagination({
         title="Previous"
         disabled={currentPage === 1}
         onPress={handlePrevPage}
-        color={"#A1861B"}
+        color={"#7A6514"}
       />
       <Button
         title="Next"
         disabled={!hasMore}
         onPress={handleNextPage}
-        color={"#A1861B"}
+        color={"#7A6514"}
       />
     </View>
   );
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: 20,
-    marginBottom: 10,
+    marginBottom: 20,
     paddingHorizontal: 20,
   },
   button: {
@@ -45,5 +45,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     padding: 10,
+    letterSpacing: 3,
   },
 });
