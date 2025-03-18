@@ -30,49 +30,44 @@ export default function CollectionScreen() {
     isLoadingCollections,
     refreshCollections,
   } = useCollections();
-  const { data: artworks, isLoading: isLoadingArtworks } = useArtworks("");
+
   const [enrichedCollection, setEnrichedCollection] =
     useState<EnrichedCollection | null>(null);
   const [isViewingCollection, setIsViewingCollection] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [currCollectionId, setCurrCollectionId] = useState<string | null>(null);
 
   const { width } = useWindowDimensions();
   const numColumns =
     width > 1500 ? 5 : width > 1200 ? 4 : width > 900 ? 3 : width > 600 ? 2 : 1;
   const itemWidth = (width - (numColumns + 1) * 20) / numColumns - 20;
-  const isLoading = isLoadingCollections || isLoadingArtworks;
+
+  const fetchEnrichedCollection = async (collectionId: string) => {
+    const selectedCollection = collections.find(
+      (collection) => collection.collectionId === collectionId
+    );
+    if (!selectedCollection) {
+      return;
+    }
+
+    setEnrichedCollection({ ...selectedCollection, artworks: [] });
+
+    return await enrichCollection(selectedCollection);
+  };
 
   const handleCollectionClick = async (collectionId: string) => {
-    setCurrCollectionId(collectionId);
-    setIsRefreshing(true);
-
     try {
-      await refreshCollections();
+      const enrichedCollection = await fetchEnrichedCollection(collectionId);
 
-      const selectedCollection = collections.find(
-        (collection) => collection.collectionId === collectionId
-      );
-      if (!selectedCollection) {
-        setIsRefreshing(false);
-        return;
+      if (enrichedCollection) {
+        setEnrichedCollection(enrichedCollection);
+        setIsViewingCollection(true);
       }
-
-      setEnrichedCollection({ ...selectedCollection, artworks: [] });
-      setIsViewingCollection(true);
-
-      const enrichedCollection = await enrichCollection(selectedCollection);
-      setEnrichedCollection(enrichedCollection);
     } catch (error) {
       console.error("Error enriching collection:", error);
-    } finally {
-      setIsRefreshing(false);
     }
   };
   const handleBackToCollections = () => {
     setIsViewingCollection(false);
     setEnrichedCollection(null);
-    setCurrCollectionId(null);
   };
 
   const handleCreateCollection = useCallback(
@@ -103,7 +98,7 @@ export default function CollectionScreen() {
     }
   };
 
-  if (isLoading && !isViewingCollection) {
+  if (isLoadingCollections && !isViewingCollection) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={"#FFD425"} />
@@ -158,7 +153,6 @@ export default function CollectionScreen() {
             </TouchableOpacity>
             {enrichedCollection && (
               <CollectionView
-                isLoading={isLoading}
                 collection={enrichedCollection}
                 onRemoveArtwork={handleRemoveArtwork}
               />
@@ -202,10 +196,11 @@ const styles = StyleSheet.create({
   },
   createButton: {
     backgroundColor: "rgba(7, 27, 75, 0.95)",
-    padding: 15,
+    padding: 12,
     margin: 20,
-    borderRadius: 16,
+    borderRadius: 30,
     alignItems: "center",
+    justifyContent: "center",
     width: 60,
     aspectRatio: 1 / 1,
     shadowColor: "#000",
@@ -281,12 +276,11 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 20,
     fontWeight: "bold",
-    fontFamily: "cochin",
+    fontFamily: "sans-serif",
     letterSpacing: 1.5,
   },
   buttonIcon: {
-    alignItems: "center",
-    justifyContent: "center",
+    textAlign: "center",
   },
   backButton: {
     flexDirection: "row",
