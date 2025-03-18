@@ -34,7 +34,7 @@ export default function ArtworkCard({
           />
         ) : (
           <View style={styles.noImage}>
-            <Text style={styles.noImageText}>No Image</Text>
+            <Text style={styles.noImageText}></Text>
           </View>
         )}
         <Text style={styles.artist}>{artwork.artist}</Text>
@@ -69,12 +69,13 @@ export default function ArtworkCard({
 const styles = StyleSheet.create({
   container: {
     margin: 10,
+    overflow: "hidden",
   },
   content: {
     width: "100%",
     padding: 10,
     borderRadius: 8,
-    backgroundColor: "rgba(0, 0, 0, 0.81)",
+    backgroundColor: "rgba(9, 22, 35, 0.9)",
   },
   optionsContainer: {
     position: "absolute",
@@ -104,21 +105,22 @@ const styles = StyleSheet.create({
     padding: 5,
     color: "white",
     fontFamily: "Cochin",
-    fontSize: 16,
+    fontSize: 18,
     textAlign: "center",
     marginBottom: 5,
+    letterSpacing: 1,
   },
   artist: {
     padding: 5,
     color: "white",
     fontFamily: "Cochin",
-    fontSize: 14,
+    fontSize: 16,
   },
   source: {
     padding: 5,
     color: "rgba(255,255,255,0.7)",
     fontFamily: "Cochin",
-    fontSize: 12,
+    fontSize: 14,
     fontStyle: "italic",
   },
   image: {

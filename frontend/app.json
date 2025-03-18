@@ -20,7 +20,12 @@
     },
     "web": {
       "bundler": "metro",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "viewport": {
+        "width": "device-width",
+        "initialScale": 1,
+        "maximumScale": 5
+      }
     },
     "plugins": [],
     "experiments": {

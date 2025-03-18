@@ -39,16 +39,31 @@ export default function CreateCollection({
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Create a new exhibiton collection</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Name..."
-        placeholderTextColor="rgba(255, 255, 255, 0.77)"
-        value={name}
-        onChangeText={setName}
-      />
-      <TouchableOpacity style={styles.button} onPress={handleCreateCollection}>
-        <AntDesign name="pluscircleo" size={28} color="white" />
-      </TouchableOpacity>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Name..."
+          placeholderTextColor="rgba(255, 255, 255, 0.77)"
+          value={name}
+          onChangeText={setName}
+        />
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleCreateCollection}
+        >
+          <AntDesign
+            name="plus"
+            size={22}
+            color="white"
+            style={{
+              fontWeight: "bold",
+              textShadowColor: "black",
+              textShadowOffset: { width: 1, height: 1 },
+              textShadowRadius: 1,
+            }}
+          />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -69,12 +84,18 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontFamily: "Cochin",
   },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+  },
   input: {
+    flex: 1,
     height: 50,
     width: "100%",
     borderColor: "rgba(255,255,255,0.2)",
     borderWidth: 1,
-    marginBottom: 24,
+    marginRight: 12,
     fontSize: 18,
     padding: 12,
     borderRadius: 4,
@@ -83,11 +104,9 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: "#FFD425",
-    padding: 10,
-    borderRadius: 6,
+    padding: 12,
+    borderRadius: 50,
     alignItems: "center",
     justifyContent: "center",
-    flexDirection: "row",
-    width: "100%",
   },
 });

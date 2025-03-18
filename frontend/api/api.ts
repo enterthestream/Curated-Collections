@@ -132,7 +132,7 @@ export async function fetchArtworkDetailsVA(artworkId: string) {
       artist:
         data.record.artistMakerPerson.length > 0
           ? data.record.artistMakerPerson[0].name.text
-          : "Unattributed, unknown or not applicable",
+          : "Unattributed or not applicable",
       artistBio: null,
       image: data.meta.images?._iiif_image
         ? `${data.meta.images._iiif_image}/full/!300,300/0/default.jpg`

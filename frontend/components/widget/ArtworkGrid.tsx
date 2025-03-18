@@ -11,7 +11,7 @@ import ArtworkDetailView from "../pages/ArtworkDetailView";
 import { Fragment, ReactNode } from "react";
 
 type ArtworkGridProps = {
-  isLoading: boolean;
+  isLoading?: boolean;
   data: Artwork[];
   numColumns?: number;
   itemWidth?: number;
@@ -24,6 +24,7 @@ type ArtworkGridProps = {
   isDetailsVisible: boolean;
   selectedArtwork: Artwork | null;
   handleCloseDetails: () => void;
+  inCollectionView?: boolean;
 };
 
 export default function ArtworkGrid({
@@ -40,12 +41,15 @@ export default function ArtworkGrid({
   renderItemExtra,
   selectedArtwork,
   handleCloseDetails,
+  inCollectionView,
 }: ArtworkGridProps) {
   const { width } = useWindowDimensions();
 
   const numColumns =
     propNumColumns ||
-    (width > 1500
+    (width > 1800
+      ? 6
+      : width > 1500
       ? 5
       : width > 1200
       ? 4
@@ -93,6 +97,7 @@ export default function ArtworkGrid({
         isDetailsVisible={isDetailsVisible}
         artwork={selectedArtwork}
         onClose={handleCloseDetails}
+        inCollectionView={inCollectionView}
       />
     </Fragment>
   );
@@ -103,6 +108,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    zIndex: 100,
   },
   listContainer: {
     paddingBottom: 20,

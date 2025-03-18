@@ -7,26 +7,16 @@ import ArtworkGrid from "../widget/ArtworkGrid";
 import { fetchArtworkBySource } from "@/api/api";
 
 type CollectionViewProps = {
-  isLoading: boolean;
   collection: EnrichedCollection;
   onRemoveArtwork?: (artworkId: string, source: string) => void;
 };
 
 export default function CollectionView({
-  isLoading,
   collection,
   onRemoveArtwork,
 }: CollectionViewProps) {
   const [selectedArtwork, setSelectedArtwork] = useState<Artwork | null>(null);
   const [isDetailsVisible, setIsDetailsVisible] = useState<boolean>(false);
-
-  if (isLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={"#FFD425"} />
-      </View>
-    );
-  }
 
   const handleArtworkSelect = async (artwork: Artwork) => {
     if (!artwork || !artwork.artworkId || !artwork.source) {
@@ -59,12 +49,12 @@ export default function CollectionView({
         data={collection.artworks}
         onArtworkSelect={handleArtworkSelect}
         contentContainerStyle={styles.listContainer}
-        isLoading={isLoading}
         onRemoveArtwork={onRemoveArtwork}
         isDetailsVisible={isDetailsVisible}
         selectedArtwork={selectedArtwork}
         header={<Text style={styles.collectionName}>{collection.name}</Text>}
         handleCloseDetails={handleCloseDetails}
+        inCollectionView={true}
       />
     </View>
   );
@@ -73,11 +63,6 @@ export default function CollectionView({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
   listContainer: {
     paddingBottom: 20,

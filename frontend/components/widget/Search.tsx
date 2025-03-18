@@ -23,7 +23,18 @@ export default function Search({ searchQuery, setSearchQuery }: SearchProps) {
   const [isDetailsVisible, setIsDetailsVisible] = useState<boolean>(false);
 
   const { width } = useWindowDimensions();
-  const numColumns = width > 1200 ? 4 : width > 900 ? 3 : width > 600 ? 2 : 1;
+  const numColumns =
+    width > 1800
+      ? 6
+      : width > 1500
+      ? 5
+      : width > 1200
+      ? 4
+      : width > 900
+      ? 3
+      : width > 600
+      ? 2
+      : 1;
   const itemWidth = (width - (numColumns + 1) * 20) / numColumns - 20;
 
   const {
