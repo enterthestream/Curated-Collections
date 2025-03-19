@@ -132,6 +132,8 @@ export async function fetchArtworkDetailsVA(artworkId: string) {
       artist:
         data.record.artistMakerPerson.length > 0
           ? data.record.artistMakerPerson[0].name.text
+          : data.record.artistMakerOrganisations.length > 0
+          ? data.record.artistMakerOrganisations[0].name.text
           : "Unattributed or not applicable",
       artistBio: null,
       image: data.meta.images?._iiif_image
@@ -144,7 +146,7 @@ export async function fetchArtworkDetailsVA(artworkId: string) {
         data.record.materials?.[0]?.text ||
         data.record.objectType ||
         "Undetermined",
-      accessionNumber: data.accessionNumber || null,
+      accessionNumber: data.record.accessionNumber || null,
       description: cleanDescription,
       detailsURL: data.meta._links.collection_page.href || null,
       origin:

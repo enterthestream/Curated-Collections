@@ -137,7 +137,13 @@ export default function CollectionScreen() {
                     style={styles.viewButton}
                     onPress={() => handleCollectionClick(item.collectionId)}
                   >
-                    <Text style={styles.buttonText}>{item.name}</Text>
+                    <Text
+                      style={styles.buttonText}
+                      numberOfLines={3}
+                      ellipsizeMode="tail"
+                    >
+                      {item.name}
+                    </Text>
                   </TouchableOpacity>
                 </View>
               )}
@@ -261,6 +267,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 8,
     alignItems: "center",
+    width: "100%",
   },
   closeButton: {
     position: "absolute",
@@ -278,6 +285,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontFamily: "sans-serif",
     letterSpacing: 1.5,
+    flexShrink: 1,
   },
   buttonIcon: {
     textAlign: "center",

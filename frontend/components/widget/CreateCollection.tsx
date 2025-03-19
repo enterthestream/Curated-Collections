@@ -26,10 +26,9 @@ export default function CreateCollection({
       return;
     }
 
-    const newCollection = { user, name };
     try {
-      await postUserCollection(user, name);
-      onCreate(newCollection);
+      const createdCollection = await postUserCollection(user, name);
+      onCreate(createdCollection);
       setName("");
     } catch (err) {
       console.error("Error creating collection", err);
