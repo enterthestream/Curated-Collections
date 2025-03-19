@@ -74,13 +74,11 @@ const styles = StyleSheet.create({
   content: {
     width: "100%",
     padding: 10,
-    borderRadius: 8,
-    backgroundColor: "rgba(9, 22, 35, 0.9)",
   },
   optionsContainer: {
     position: "absolute",
-    top: 5,
-    right: 5,
+    top: 0,
+    right: 0,
     zIndex: 10,
   },
   optionsButton: {
@@ -104,8 +102,7 @@ const styles = StyleSheet.create({
   title: {
     padding: 5,
     color: "white",
-    fontFamily: "Cochin",
-    fontSize: 18,
+    fontSize: 16,
     textAlign: "center",
     marginBottom: 5,
     letterSpacing: 1,
@@ -113,13 +110,11 @@ const styles = StyleSheet.create({
   artist: {
     padding: 5,
     color: "white",
-    fontFamily: "Cochin",
     fontSize: 16,
   },
   source: {
     padding: 5,
     color: "rgba(255,255,255,0.7)",
-    fontFamily: "Cochin",
     fontSize: 14,
     fontStyle: "italic",
   },

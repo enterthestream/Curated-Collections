@@ -114,7 +114,16 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   itemContainer: {
+    backgroundColor: "rgb(7, 27, 48)",
     flexDirection: "row",
     alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+    borderRadius: 8,
+    marginBottom: 18,
+    marginHorizontal: 6,
   },
 });

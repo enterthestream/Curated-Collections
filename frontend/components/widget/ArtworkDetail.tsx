@@ -40,12 +40,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginTop: 10,
-    fontFamily: "Cochin",
   },
   detailText: {
     padding: 5,
     color: "white",
-    fontFamily: "Cochin",
     fontSize: 14,
   },
   linkText: {

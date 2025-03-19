@@ -22,6 +22,9 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const toggleSearch = () => {
+    if (searchVisible && searchQuery) {
+      navigation.navigate("SearchResults", { query: searchQuery });
+    }
     setSearchVisible(!searchVisible);
   };
 
@@ -37,6 +40,7 @@ export default function Header() {
 
       <View style={styles.searchContainer}>
         <TouchableOpacity onPress={toggleSearch} style={styles.searchButton}>
+          <Text style={styles.searchButtonText}>Search</Text>
           <Feather name="search" size={20} color={"white"} />
         </TouchableOpacity>
       </View>
@@ -82,20 +86,29 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 20,
     fontWeight: "bold",
-    fontFamily: "sans-serif",
+    fontFamily: "System",
     margin: 20,
   },
   searchText: {
     color: "white",
     fontSize: 14,
-    fontFamily: "sans-serif",
+    fontFamily: "System",
   },
   searchButton: {
     width: 40,
     height: 40,
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-end",
     marginLeft: 8,
+    marginRight: 12,
+  },
+  searchButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+    marginRight: 8,
+    fontFamily: "System",
   },
   modalContainer: {
     flex: 1,
@@ -113,7 +126,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 22,
     fontWeight: "bold",
-    fontFamily: "sans-serif",
+    fontFamily: "System",
   },
   closeButton: {
     width: 40,
