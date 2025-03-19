@@ -3,54 +3,44 @@
     {
       "user": "test_user",
       "collectionId": "5cc13cba-934e-4231-b746-c26a7242cfcb",
-      "name": "my first collection",
+      "name": "Matisse: Master of Colour",
       "artworks": [
         {
           "artworkId": "O685769",
+          "source": "Victoria and Albert Museum"
+        },
+        {
+          "artworkId": "O367847",
+          "source": "Victoria and Albert Museum"
+        },
+        {
+          "artworkId": "O154025",
           "source": "Victoria and Albert Museum"
         }
       ]
     },
     {
       "user": "test_user",
-      "name": "my second collection",
+      "name": "Post-war",
       "artworks": [
         {
-          "artworkId": "O685769",
+          "artworkId": "O268796",
+          "source": "Victoria and Albert Museum"
+        },
+        {
+          "artworkId": "O166337",
+          "source": "Victoria and Albert Museum"
+        },
+        {
+          "artworkId": "O231832",
+          "source": "Victoria and Albert Museum"
+        },
+        {
+          "artworkId": "O140760",
           "source": "Victoria and Albert Museum"
         }
       ],
       "collectionId": "092259ca-4750-40c7-8eb2-a085e9307d9c"
-    },
-    {
-      "user": "royal-user",
-      "name": "van gogh",
-      "artworks": [
-        {
-          "artworkId": "O131404",
-          "source": "Victoria and Albert Museum"
-        },
-        {
-          "artworkId": "O88411",
-          "source": "Victoria and Albert Museum"
-        }
-      ],
-      "collectionId": "eda9a3b7-b073-43bd-a62f-efeefe0dec10"
-    },
-    {
-      "user": "royal-user",
-      "name": "matisse",
-      "artworks": [
-        {
-          "artworkId": "O738167",
-          "source": "Victoria and Albert Museum"
-        },
-        {
-          "artworkId": "489996",
-          "source": "The Metropolitan Museum of Art"
-        }
-      ],
-      "collectionId": "0791f3c6-477d-49bf-b064-1719bc035911"
     }
   ]
 }
