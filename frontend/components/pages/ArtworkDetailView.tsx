@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
   artworkTitle: {
     padding: 5,
     color: "white",
-    fontFamily: "Cochin",
+    fontFamily: "System",
     fontSize: 18,
     textAlign: "center",
     marginBottom: 5,
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
   noText: {
     color: "white",
     fontSize: 16,
-    fontFamily: "Cochin",
+    fontFamily: "System",
     zIndex: 100,
     alignItems: "center",
     justifyContent: "center",
@@ -210,12 +210,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginTop: 10,
-    fontFamily: "Cochin",
+    fontFamily: "System",
   },
   detailText: {
     padding: 5,
     color: "white",
-    fontFamily: "Cochin",
+    fontFamily: "System",
     fontSize: 14,
   },
   collectionSection: {
@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 15,
-    fontFamily: "Cochin",
+    fontFamily: "System",
   },
 
   noCollectionsMsg: {
@@ -241,7 +241,7 @@ const styles = StyleSheet.create({
     color: "#4CAF50",
     marginLeft: 10,
     fontSize: 16,
-    fontFamily: "Cochin",
+    fontFamily: "System",
   },
   successMessage: {
     flexDirection: "row",

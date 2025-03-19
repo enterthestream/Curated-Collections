@@ -71,8 +71,10 @@ const styles = StyleSheet.create({
   collectionName: {
     fontSize: 20,
     fontWeight: "bold",
+    marginTop: 25,
     marginBottom: 15,
     color: "rgb(7, 27, 48)",
     padding: 10,
+    fontFamily: "System",
   },
 });

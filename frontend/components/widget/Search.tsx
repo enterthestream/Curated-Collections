@@ -12,6 +12,9 @@ import { usePagination } from "../hooks/usePagination";
 import { Artwork } from "@/types.ts/artworks";
 import SearchResults from "../pages/SearchResults";
 import { fetchArtworkBySource } from "@/api/api";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParams } from "@/App";
 
 type SearchProps = {
   searchQuery: string;
@@ -21,6 +24,8 @@ export default function Search({ searchQuery, setSearchQuery }: SearchProps) {
   const [submittedQuery, setSubmittedQuery] = useState<string>("");
   const [selectedArtwork, setSelectedArtwork] = useState<Artwork | null>(null);
   const [isDetailsVisible, setIsDetailsVisible] = useState<boolean>(false);
+
+  const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
 
   const { width } = useWindowDimensions();
   const numColumns =
@@ -55,6 +60,9 @@ export default function Search({ searchQuery, setSearchQuery }: SearchProps) {
   const handleSearchSubmit = () => {
     setCurrentPage(1);
     setSubmittedQuery(searchQuery);
+    navigation.navigate("SearchResults", {
+      query: searchQuery,
+    });
     if (Platform.OS !== "web") {
       Keyboard.dismiss();
     }

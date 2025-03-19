@@ -9,17 +9,21 @@ import {
   Modal,
   useWindowDimensions,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { RouteProp, useNavigation } from "@react-navigation/native";
 import CreateCollection from "../widget/CreateCollection";
 import { Feather } from "@expo/vector-icons";
 import { useCollections } from "@/context/CollectionsContext";
 import CollectionView from "./CollectionView";
-import { useArtworks } from "../hooks/useArtworks";
 import { EnrichedCollection } from "@/types.ts/collection";
 import { enrichCollection } from "@/api/api";
 import { deleteArtwork } from "@/api/backendFunctions";
+import { RootStackParams } from "@/App";
 
-export default function CollectionScreen() {
+type CollectionScreenProps = {
+  route: RouteProp<RootStackParams, "Collections" | "Artwork">;
+};
+
+export default function CollectionScreen({ route }: CollectionScreenProps) {
   const user = "royal-user";
   const [isCreateVisible, setIsCreateVisible] = useState(false);
   const navigation = useNavigation();
@@ -109,10 +113,8 @@ export default function CollectionScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.overlayContainer}>
-        <Text style={styles.title}>My collections</Text>
-
         {!isViewingCollection ? (
-          <Fragment>
+          <View style={styles.collectionContent}>
             <TouchableOpacity
               style={styles.createButton}
               onPress={() => setIsCreateVisible(true)}
@@ -120,37 +122,46 @@ export default function CollectionScreen() {
               <Feather
                 name="plus"
                 size={24}
-                color={"white"}
+                color={"rgb(7, 27, 48)"}
                 style={styles.buttonIcon}
               />
+              <Text style={styles.buttonText}>Create New Collection</Text>
             </TouchableOpacity>
-
-            <FlatList
-              data={collections}
-              numColumns={numColumns}
-              key={numColumns}
-              keyExtractor={(item) => item.collectionId}
-              contentContainerStyle={styles.listContainer}
-              renderItem={({ item }) => (
-                <View style={[styles.collectionItem, { width: itemWidth }]}>
-                  <TouchableOpacity
-                    style={styles.viewButton}
-                    onPress={() => handleCollectionClick(item.collectionId)}
-                  >
-                    <Text style={styles.buttonText}>{item.name}</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
-            />
-          </Fragment>
+            <View style={styles.collectionsList}>
+              <FlatList
+                data={collections}
+                numColumns={numColumns}
+                key={numColumns}
+                keyExtractor={(item) => item.collectionId}
+                contentContainerStyle={styles.listContainer}
+                renderItem={({ item }) => (
+                  <View style={[styles.collectionItem, { width: itemWidth }]}>
+                    <TouchableOpacity
+                      style={styles.viewButton}
+                      onPress={() => handleCollectionClick(item.collectionId)}
+                    >
+                      <Text
+                        style={styles.buttonText}
+                        numberOfLines={3}
+                        ellipsizeMode="tail"
+                      >
+                        {item.name}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              />
+            </View>
+          </View>
         ) : (
           <View style={styles.contentContainer}>
             <TouchableOpacity
               style={styles.backButton}
               onPress={handleBackToCollections}
             >
-              <Feather name="arrow-left" size={24} color="rgba(7, 27, 75)" />
+              <Feather name="arrow-left" size={28} color="rgb(7, 27, 48)" />
             </TouchableOpacity>
+
             {enrichedCollection && (
               <CollectionView
                 collection={enrichedCollection}
@@ -194,20 +205,24 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.9)",
     justifyContent: "center",
   },
+  collectionContent: {
+    paddingHorizontal: 20,
+    alignItems: "center",
+  },
   createButton: {
-    backgroundColor: "rgba(7, 27, 75, 0.95)",
-    padding: 12,
-    margin: 20,
+    marginTop: 20,
     borderRadius: 30,
     alignItems: "center",
     justifyContent: "center",
-    width: 60,
-    aspectRatio: 1 / 1,
+    backgroundColor: "#FFD425",
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    flexDirection: "row",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 2.5,
-    shadowOpacity: 0.25,
-    elevation: 5,
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
   loadingContainer: {
     flex: 1,
@@ -227,10 +242,8 @@ const styles = StyleSheet.create({
   overlayContainer: {
     flex: 1,
     justifyContent: "flex-start",
-    paddingTop: 40,
+    paddingTop: 20,
     paddingHorizontal: 20,
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(225, 225, 221, 0.9)",
   },
   title: {
     fontSize: 24,
@@ -241,26 +254,33 @@ const styles = StyleSheet.create({
     fontFamily: "sans-serif",
     color: "rgb(7, 27, 48)",
   },
+  collectionHeader: {},
+  collectionsList: {
+    width: "100%",
+    maxWidth: 1200,
+    marginTop: 20,
+  },
   collectionItem: {
     margin: 10,
-    height: 200,
-    backgroundColor: "rgb(7, 27, 48)",
+    backgroundColor: "rgba(255, 212, 37, 0.05)",
     marginBottom: 15,
-    borderRadius: 16,
-    padding: 15,
+    borderRadius: 12,
+    padding: 24,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 2.5,
-    shadowOpacity: 0.25,
-    elevation: 5,
+    shadowColor: "rgb(7, 27, 48)",
+    shadowOffset: { width: 0, height: 1 },
+    shadowRadius: 3,
+    shadowOpacity: 0.2,
+    elevation: 8,
+    height: 220,
   },
   viewButton: {
     padding: 10,
     borderRadius: 8,
     alignItems: "center",
+    width: "100%",
   },
   closeButton: {
     position: "absolute",
@@ -273,20 +293,35 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   buttonText: {
-    color: "white",
-    fontSize: 20,
+    color: "rgb(7, 27, 48)",
+    fontSize: 16,
     fontWeight: "bold",
-    fontFamily: "sans-serif",
-    letterSpacing: 1.5,
+    fontFamily: "System",
+    letterSpacing: 1,
+    textAlign: "center",
   },
   buttonIcon: {
     textAlign: "center",
+    marginRight: 12,
   },
   backButton: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 20,
-    width: 40,
-    padding: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
+    backgroundColor: "rgba(255, 212, 37, 0.01)",
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    borderRadius: 30,
+    alignSelf: "flex-start",
+  },
+  backButtonText: {
+    marginLeft: 8,
+    color: "rgb(7, 27, 48)",
+    fontSize: 14,
+    fontFamily: "System",
   },
 });

@@ -96,12 +96,9 @@ export default function CollectionSelector({
               <AntDesign
                 name="plus"
                 size={22}
-                color="white"
+                color="rgb(7, 27, 48)"
                 style={{
-                  fontWeight: "bold",
-                  textShadowColor: "black",
-                  textShadowOffset: { width: 1, height: 1 },
-                  textShadowRadius: 1,
+                  fontWeight: "500",
                 }}
               />
             </View>
@@ -120,7 +117,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
-    fontFamily: "Cochin",
     color: "white",
     padding: 10,
   },
@@ -139,7 +135,6 @@ const styles = StyleSheet.create({
   collectionName: {
     color: "white",
     fontSize: 17,
-    fontFamily: "Cochin",
     alignSelf: "center",
     letterSpacing: 0.5,
   },
@@ -147,7 +142,6 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 20,
     fontWeight: "bold",
-    fontFamily: "Cochin",
     letterSpacing: 1,
   },
   addButton: {

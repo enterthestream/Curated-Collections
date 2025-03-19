@@ -4,6 +4,7 @@ import { Artwork } from "@/types.ts/artworks";
 import { useState } from "react";
 import { TextInput } from "react-native-gesture-handler";
 import ArtworkGrid from "../widget/ArtworkGrid";
+import { useRoute } from "@react-navigation/native";
 
 type SearchResultsProps = {
   isLoading: boolean;
@@ -89,10 +90,7 @@ export default function SearchResults({
         isDetailsVisible={isDetailsVisible}
         handleCloseDetails={handleCloseDetails}
         header={
-          <View>
-            <Text style={styles.resultsCount}>
-              {recordsCount} results found
-            </Text>
+          <View style={styles.filterContainer}>
             <TextInput
               style={styles.filterInput}
               placeholder="Filter by artist..."
@@ -102,12 +100,17 @@ export default function SearchResults({
           </View>
         }
         footer={
-          <Pagination
-            handleNextPage={handleNextPage}
-            handlePrevPage={handlePrevPage}
-            currentPage={currentPage}
-            hasMore={hasMore}
-          />
+          <View>
+            <Pagination
+              handleNextPage={handleNextPage}
+              handlePrevPage={handlePrevPage}
+              currentPage={currentPage}
+              hasMore={hasMore}
+            />
+            <Text style={styles.resultsCount}>
+              {recordsCount} results found
+            </Text>
+          </View>
         }
       />
     </View>
@@ -133,6 +136,7 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     marginBottom: 10,
+    alignSelf: "center",
   },
   listContainer: {
     paddingBottom: 20,
@@ -148,7 +152,11 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 15,
     fontWeight: "bold",
-    fontFamily: "Cochin",
+  },
+  filterContainer: {
+    padding: 6,
+    width: "20%",
+    marginBottom: 16,
   },
   filterInput: {
     height: 40,
@@ -158,7 +166,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderColor: "white",
     color: "white",
-    fontFamily: "Cochin",
     fontSize: 20,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     borderRadius: 8,

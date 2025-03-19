@@ -26,10 +26,9 @@ export default function CreateCollection({
       return;
     }
 
-    const newCollection = { user, name };
     try {
-      await postUserCollection(user, name);
-      onCreate(newCollection);
+      const createdCollection = await postUserCollection(user, name);
+      onCreate(createdCollection);
       setName("");
     } catch (err) {
       console.error("Error creating collection", err);
@@ -54,7 +53,7 @@ export default function CreateCollection({
           <AntDesign
             name="plus"
             size={22}
-            color="white"
+            color="rgb(7, 27, 48)"
             style={{
               fontWeight: "bold",
               textShadowColor: "black",
@@ -82,7 +81,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "white",
     fontWeight: "bold",
-    fontFamily: "Cochin",
   },
   inputContainer: {
     flexDirection: "row",
@@ -99,7 +97,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     padding: 12,
     borderRadius: 4,
-    fontFamily: "Cochin",
+
     color: "white",
   },
   button: {
