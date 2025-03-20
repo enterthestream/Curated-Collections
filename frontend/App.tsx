@@ -20,22 +20,13 @@ export type RootStackParams = {
 const Stack = createStackNavigator<RootStackParams>();
 const queryClient = new QueryClient();
 
-const linking: LinkingOptions<RootStackParams> = {
-  prefixes: [""],
-  config: {
-    screens: {
-      Landing: "",
-    },
-  },
-};
-
 export default function App() {
   const user = "royal-user";
 
   return (
     <QueryClientProvider client={queryClient}>
       <CollectionsContextProvider userId={user}>
-        <NavigationContainer linking={linking}>
+        <NavigationContainer>
           <Stack.Navigator
             initialRouteName="Landing"
             screenOptions={({ route }) => ({
