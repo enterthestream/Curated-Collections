@@ -8,8 +8,10 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  ImageBackground,
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+const backgroundImage = require("@/assets/images/painting-exhibition-751576_1920.jpg");
 
 export default function LandingPage() {
   const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
@@ -20,16 +22,22 @@ export default function LandingPage() {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
+      <ImageBackground
+        source={backgroundImage}
+        style={styles.backgroundImage}
+        resizeMode="cover"
+      />
+      <View style={styles.overlay} />
       <View style={styles.hero}>
         <View style={styles.heroContent}>
-          <Text style={styles.heroTitle}>Welcome to Curated Collections</Text>
-          <Text style={styles.heroSubtitle}>
+          <Text style={styles.heroTitle}>Curated Collections</Text>
+          {/*           <Text style={styles.heroSubtitle}>
             Curate your own virtual art exhibitions
-          </Text>
+          </Text> */}
         </View>
       </View>
-      <TouchableOpacity style={styles.button} onPress={handleGetStarted}>
+      {/* <TouchableOpacity style={styles.button} onPress={handleGetStarted}>
         <Text style={styles.buttonText}>Get Started</Text>
         <Feather
           name="arrow-right"
@@ -37,7 +45,8 @@ export default function LandingPage() {
           color="white"
           style={styles.buttonIcon}
         />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
+
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Features</Text>
 
@@ -95,17 +104,19 @@ export default function LandingPage() {
           </Text>
         </TouchableOpacity>
       </View>
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
   },
   hero: {
-    backgroundColor: "rgba(7, 27, 48, 0.95)",
     paddingVertical: 60,
     paddingHorizontal: 20,
     alignItems: "center",
@@ -125,7 +136,7 @@ const styles = StyleSheet.create({
   },
   heroSubtitle: {
     fontSize: 18,
-    color: "rgba(255, 255, 255, 0.8)",
+    color: "rgba(255, 255, 255, 1)",
     textAlign: "center",
     marginBottom: 32,
     fontFamily: "System",
@@ -145,6 +156,7 @@ const styles = StyleSheet.create({
   },
   buttonAlt: {
     backgroundColor: "#FFD425",
+    opacity: 0.95,
     paddingVertical: 14,
     paddingHorizontal: 24,
     borderRadius: 30,
@@ -166,6 +178,11 @@ const styles = StyleSheet.create({
     marginRight: 8,
     fontFamily: "System",
   },
+  backgroundImage: {
+    ...StyleSheet.absoluteFillObject,
+    width: "100%",
+    height: "100%",
+  },
   buttonIcon: {
     color: "rgb(7, 27, 48)",
   },
@@ -185,7 +202,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 40,
     textAlign: "center",
-    color: "rgb(7, 27, 48)",
+    color: "white",
     fontFamily: "System",
   },
   featureRow: {
@@ -197,6 +214,7 @@ const styles = StyleSheet.create({
   featureCard: {
     flex: 1,
     backgroundColor: "white",
+    opacity: 0.9,
     borderRadius: 12,
     padding: 24,
     marginBottom: 20,
@@ -237,6 +255,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "space-between",
+    marginTop: "auto",
   },
   footerText: {
     fontSize: 14,

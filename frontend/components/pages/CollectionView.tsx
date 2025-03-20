@@ -73,8 +73,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 25,
     marginBottom: 15,
-    color: "rgb(7, 27, 48)",
+    color: "white",
     padding: 10,
     fontFamily: "System",
+    textShadowColor: "rgba(0, 0, 0, 0.75)",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+    letterSpacing: 1,
   },
 });

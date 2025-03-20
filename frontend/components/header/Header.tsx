@@ -22,9 +22,6 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const toggleSearch = () => {
-    if (searchVisible && searchQuery) {
-      navigation.navigate("SearchResults", { query: searchQuery });
-    }
     setSearchVisible(!searchVisible);
   };
 
@@ -69,12 +66,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "rgb(7, 27, 48)",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    backgroundColor: "black",
+    paddingHorizontal: 20,
+    paddingVertical: 20,
     height: Platform.OS === "web" ? 64 : 56,
     borderBottomWidth: 1,
-    borderBottomColor: "#2c3440",
     width: "100%",
     zIndex: 100,
   },
@@ -112,7 +108,7 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     flex: 1,
-    backgroundColor: "#14181c",
+    backgroundColor: "black",
   },
   modalHeader: {
     flexDirection: "row",
@@ -120,7 +116,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#2c3440",
   },
   modalTitle: {
     color: "#fff",

@@ -8,7 +8,6 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Platform } from "react-native";
 import { CollectionsContextProvider } from "./context/CollectionsContext";
 import LandingPage from "./components/pages/LandingPage";
-import SearchResults from "./components/pages/SearchResults";
 
 export type RootStackParams = {
   Landing: undefined;
@@ -22,17 +21,10 @@ const Stack = createStackNavigator<RootStackParams>();
 const queryClient = new QueryClient();
 
 const linking: LinkingOptions<RootStackParams> = {
-  prefixes: [
-    "https://curated-collections.netlify.app/",
-    "http://localhost:8081/",
-  ],
+  prefixes: [""],
   config: {
     screens: {
       Landing: "",
-      Collections: "collections",
-      Collection: "collections/:collectionId",
-      Artwork: "collections/:collectionId/artwork/:artworkId/:source",
-      SearchResults: "search",
     },
   },
 };
@@ -54,7 +46,6 @@ export default function App() {
           >
             <Stack.Screen name="Landing" component={LandingPage} />
             <Stack.Screen name="Collections" component={CollectionScreen} />
-            <Stack.Screen name="Artwork" component={CollectionScreen} />
           </Stack.Navigator>
         </NavigationContainer>
         {Platform.OS === "web" && <ReactQueryDevtools initialIsOpen={false} />}

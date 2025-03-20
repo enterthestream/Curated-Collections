@@ -5,6 +5,7 @@ import {
   Keyboard,
   Platform,
   useWindowDimensions,
+  ImageBackground,
 } from "react-native";
 import { useArtworks } from "../hooks/useArtworks";
 import { useState } from "react";
@@ -15,6 +16,7 @@ import { fetchArtworkBySource } from "@/api/api";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParams } from "@/App";
+const backgroundImage = require("@/assets/images/painting-exhibition-751576_1920.jpg");
 
 type SearchProps = {
   searchQuery: string;
@@ -112,6 +114,11 @@ export default function Search({ searchQuery, setSearchQuery }: SearchProps) {
   };
   return (
     <View style={[styles.container, { width: width }]}>
+      <ImageBackground
+        source={backgroundImage}
+        style={styles.backgroundImage}
+        resizeMode="cover"
+      />
       <View style={styles.searchBarContainer}>
         <TextInput
           style={[styles.input, { width: 0.3 * width }]}
@@ -148,14 +155,17 @@ export default function Search({ searchQuery, setSearchQuery }: SearchProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "rgba(20, 24, 28, 0.95)",
+  },
+  overlay: {},
+  backgroundImage: {
+    ...StyleSheet.absoluteFillObject,
+    width: "100%",
+    height: "100%",
   },
   searchBarContainer: {
     paddingVertical: 20,
     paddingHorizontal: 20,
     alignItems: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(255,255,255,0.1)",
   },
   input: {
     height: 50,

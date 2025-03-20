@@ -46,7 +46,7 @@ export default function ArtworkCard({
             onPress={() => setShowOptions(!showOptions)}
             style={styles.optionsButton}
           >
-            <Feather name="more-vertical" size={18} color="white" />
+            <Feather name="more-vertical" size={18} color="black" />
           </TouchableOpacity>
           {showOptions && (
             <View style={styles.dropdownMenu}>
@@ -101,20 +101,21 @@ const styles = StyleSheet.create({
   },
   title: {
     padding: 5,
-    color: "white",
+    color: "rgb(7, 27, 48)",
     fontSize: 16,
     textAlign: "center",
     marginBottom: 5,
     letterSpacing: 1,
+    fontWeight: "800",
   },
   artist: {
     padding: 5,
-    color: "white",
+    color: "rgb(7, 27, 48)",
     fontSize: 16,
   },
   source: {
     padding: 5,
-    color: "rgba(255,255,255,0.7)",
+    color: "rgba(7, 27, 48,0.7)",
     fontSize: 14,
     fontStyle: "italic",
   },

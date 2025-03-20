@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { FlatList } from "react-native-gesture-handler";
 import {
   View,
@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Modal,
   useWindowDimensions,
+  ImageBackground,
 } from "react-native";
 import { RouteProp, useNavigation } from "@react-navigation/native";
 import CreateCollection from "../widget/CreateCollection";
@@ -17,13 +18,9 @@ import CollectionView from "./CollectionView";
 import { EnrichedCollection } from "@/types.ts/collection";
 import { enrichCollection } from "@/api/api";
 import { deleteArtwork } from "@/api/backendFunctions";
-import { RootStackParams } from "@/App";
+const backgroundImage = require("@/assets/images/painting-exhibition-751576_1920.jpg");
 
-type CollectionScreenProps = {
-  route: RouteProp<RootStackParams, "Collections" | "Artwork">;
-};
-
-export default function CollectionScreen({ route }: CollectionScreenProps) {
+export default function CollectionScreen() {
   const user = "royal-user";
   const [isCreateVisible, setIsCreateVisible] = useState(false);
   const navigation = useNavigation();
@@ -77,6 +74,7 @@ export default function CollectionScreen({ route }: CollectionScreenProps) {
   const handleCreateCollection = useCallback(
     (newCollection: any) => {
       setCollections((prevCollections) => [...prevCollections, newCollection]);
+      setIsCreateVisible(false);
     },
     [setCollections]
   );
@@ -112,6 +110,11 @@ export default function CollectionScreen({ route }: CollectionScreenProps) {
 
   return (
     <View style={styles.container}>
+      <ImageBackground
+        source={backgroundImage}
+        style={styles.backgroundImage}
+        resizeMode="cover"
+      />
       <View style={styles.overlayContainer}>
         {!isViewingCollection ? (
           <View style={styles.collectionContent}>
@@ -180,7 +183,7 @@ export default function CollectionScreen({ route }: CollectionScreenProps) {
             <CreateCollection user={user} onCreate={handleCreateCollection} />
             <TouchableOpacity
               onPress={() => {
-                setIsCreateVisible(false);
+                setIsCreateVisible(!isCreateVisible);
               }}
               style={styles.closeButton}
             >
@@ -239,11 +242,18 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
+  backgroundImage: {
+    ...StyleSheet.absoluteFillObject,
+    width: "100%",
+    height: "100%",
+  },
   overlayContainer: {
     flex: 1,
     justifyContent: "flex-start",
     paddingTop: 20,
     paddingHorizontal: 20,
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
   },
   title: {
     fontSize: 24,
@@ -262,7 +272,7 @@ const styles = StyleSheet.create({
   },
   collectionItem: {
     margin: 10,
-    backgroundColor: "rgba(255, 212, 37, 0.05)",
+    backgroundColor: "rgb(225, 225, 221)",
     marginBottom: 15,
     borderRadius: 12,
     padding: 24,
@@ -270,9 +280,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     shadowColor: "rgb(7, 27, 48)",
-    shadowOffset: { width: 0, height: 1 },
-    shadowRadius: 3,
-    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 4,
+    shadowOpacity: 0.9,
     elevation: 8,
     height: 220,
   },
@@ -312,9 +322,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 2,
-    backgroundColor: "rgba(255, 212, 37, 0.01)",
+    backgroundColor: "white",
     paddingVertical: 14,
-    paddingHorizontal: 24,
+    paddingHorizontal: 14,
     borderRadius: 30,
     alignSelf: "flex-start",
   },
